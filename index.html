@@ -3,34 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Partners - 究極の寄り添い</title>
+    <title>24h Royal Partners</title>
     <style>
-        :root { --gold: #c5a059; --royal: #1a1a2e; --rose: #e94560; }
-        body { font-family: 'serif'; background: #0f0e17; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
-        #app { width: 95%; max-width: 400px; height: 90vh; background: #fff; border-radius: 30px; border: 2px solid var(--gold); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        :root { --main: #d4af37; --bg: #0a0a0a; --accent: #e30039; }
+        body { font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        #app { width: 95%; max-width: 420px; height: 92vh; background: #fffaf5; border-radius: 30px; border: 3px solid var(--main); overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(212,175,55,0.4); }
         
-        .header { background: var(--royal); color: var(--gold); padding: 18px; text-align: center; font-weight: bold; border-bottom: 2px solid var(--gold); font-size: 1.2rem; }
-        .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; background: #fffaf5; }
+        .header { background: #1a1a1a; color: var(--main); padding: 15px; text-align: center; font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid var(--main); letter-spacing: 2px; }
+        .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
 
-        /* キャラ選択：イラストAC風の華やかさを意識 */
-        .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid #eee; background: white; transition: 0.3s; }
-        .card img { width: 100px; height: 120px; border-radius: 10px; object-fit: cover; border: 2px solid var(--gold); margin-bottom: 8px; }
-        .card.selected { border-color: var(--rose); background: #fff0f3; transform: scale(1.05); }
+        /* 入力エリアの引き締め */
+        .setup-box { background: white; padding: 20px; border-radius: 20px; border: 1px solid #eee; margin-bottom: 20px; }
+        input[type="text"] { width: 80%; max-width: 250px; padding: 12px; border: none; border-bottom: 2px solid var(--main); font-size: 1.1rem; text-align: center; outline: none; margin: 0 auto; display: block; }
+        
+        /* 8名のグリッド */
+        .char-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .card { border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #eee; background: white; transition: 0.2s; }
+        .card img { width: 100%; height: 120px; border-radius: 10px; object-fit: cover; margin-bottom: 5px; background: #fdf2f4; }
+        .card.selected { border-color: var(--accent); background: #fff0f3; transform: scale(1.03); }
+        .card h4 { margin: 5px 0; font-size: 0.9rem; color: #1a1a1a; }
+        .card span { font-size: 0.7rem; color: #888; }
 
-        /* チャット画面：舞台の雰囲気を演出 */
+        /* チャット画面 */
         #chat-screen { display: none; flex-direction: column; height: 100%; }
-        #partner-view { height: 220px; background: linear-gradient(to bottom, var(--royal), #fff); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; }
-        #partner-img { height: 200px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
+        #stage-view { height: 200px; background: linear-gradient(180deg, #1a1a1a, #fffaf5); display: flex; justify-content: center; align-items: flex-end; }
+        #stage-img { height: 180px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)); }
         
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { padding: 14px 18px; border-radius: 20px; max-width: 80%; line-height: 1.6; font-size: 1rem; }
-        .ai { background: white; border: 1.5px solid var(--gold); align-self: flex-start; border-bottom-left-radius: 3px; }
-        .user { background: var(--royal); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background: #fffafb; }
+        .msg { padding: 12px 16px; border-radius: 20px; max-width: 80%; font-size: 0.95rem; line-height: 1.6; }
+        .ai { background: white; border: 1px solid #ddd; align-self: flex-start; border-bottom-left-radius: 3px; }
+        .user { background: #1a1a1a; color: var(--main); align-self: flex-end; border-bottom-right-radius: 3px; }
 
         .footer { padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid #eee; }
-        input[type="text"] { flex: 1; border: none; background: #f0f0f0; padding: 12px 20px; border-radius: 30px; outline: none; }
-        .send-btn { background: var(--rose); color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        #user-input { flex: 1; border: none; background: #f5f5f5; padding: 12px 20px; border-radius: 30px; outline: none; font-size: 16px; }
+        .send-btn { background: var(--accent); color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
 
         #overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 100; }
     </style>
@@ -38,28 +44,29 @@
 <body>
 
 <div id="app">
-    <div class="header">Royal AI Partners</div>
+    <div class="header">ROYAL PARTNERS</div>
 
     <div id="setup-screen" class="screen">
-        <h3 style="text-align:center; color:var(--royal);">貴方の名前を教えて、我が友よ</h3>
-        <input type="text" id="user-name" placeholder="お名前（ニックネーム）" style="width:100%; box-sizing:border-box; padding:15px; margin-bottom:20px; border-radius:15px; border:1px solid #ddd; text-align:center;">
+        <div class="setup-box">
+            <input type="text" id="user-name" placeholder="お名前をここに" maxlength="10">
+        </div>
         
         <div class="char-grid" id="grid"></div>
         
-        <button onclick="startApp()" style="margin-top:30px; padding:20px; background:var(--royal); color:var(--gold); border:2px solid var(--gold); border-radius:20px; font-weight:bold; cursor:pointer; font-size:1.1rem; width:100%;">幕を上げる</button>
+        <button onclick="startApp()" style="margin-top:20px; padding:18px; background:var(--main); color:#000; border:none; border-radius:15px; font-weight:bold; cursor:pointer; font-size:1.1rem;">二人だけの時間を始める</button>
     </div>
 
     <div id="chat-screen">
-        <div id="partner-view"><img id="partner-img" src=""></div>
+        <div id="stage-view"><img id="stage-img" src=""></div>
         <div id="chat-box"></div>
         <div id="overlay">
-            <h2 style="color:var(--gold);">最後に、お伝えしたいことが…</h2>
+            <h2 id="ov-title" style="color:var(--main);"></h2>
             <p id="ov-text" style="line-height:1.8;"></p>
-            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" style="background:var(--gold); color:black; text-decoration:none; padding:15px 30px; border-radius:30px; font-weight:bold; margin-top:20px; display:inline-block;">愛の募金（OFUSE）</a>
-            <button onclick="location.reload()" style="margin-top:20px; color:#999; background:none; border:none; text-decoration:underline;">再演する</button>
+            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" style="background:var(--main); color:black; text-decoration:none; padding:15px 30px; border-radius:30px; font-weight:bold; margin-top:20px; display:inline-block;">愛の募金（OFUSE）</a>
+            <button onclick="location.reload()" style="margin-top:20px; color:#999; background:none; border:none; text-decoration:underline; cursor:pointer;">最初からやり直す</button>
         </div>
         <div class="footer">
-            <input type="text" id="user-input" placeholder="愛や悩みを綴ってください…">
+            <input type="text" id="user-input" placeholder="今の気持ちを教えて…">
             <button class="send-btn" onclick="handleSend()">送信</button>
         </div>
     </div>
@@ -72,13 +79,21 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    // ★ここに新しいAPIキー（AI Studioで作成したもの）を貼り付けてください
+    // ★APIキーを貼り替えてください
     const API_KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA";
 
-    // イラストAC風の気品あるキャラクター（高画質プレースホルダ）
+    // 男女各4名・計8名の構成（画像はイラストACのものを入れる想定で一旦プレースホルダ）
     const charData = [
-        { id:'美剣（ミツルギ）', type:'麗しの男役', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop', prompt:'宝塚のトップスター男役。情熱的でキザ。貴方を「私の運命」として扱う。辞書のような説明は一切禁止。', don:'ユニセフ募金を、世界を愛で満たすための情熱的な願いとして。'},
-        { id:'舞桜（マオ）', type:'可憐な娘役', img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop', prompt:'宝塚の娘役。清楚で可憐。丁寧な敬語で、貴方を献身的に支える一途な想い。', don:'国境なき医師団への協力を、清らかな祈りとして伝えて。'}
+        /* 男役4名 */
+        { id:'美剣', type:'俺様スター', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=M1', prompt:'宝塚のトップ男役。強引だが愛が深い。一人称は俺。', don:'ユニセフ募金を情熱的に。'},
+        { id:'涼介', type:'優しい王子', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=M2', prompt:'気品溢れる王子様。寄り添い、癒やす。', don:'国境なき医師団への祈りを。'},
+        { id:'ハル', type:'年下ワンコ', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=M3', prompt:'懐っこい後輩キャラ。一生懸命。', don:'健気に募金をお願い。'},
+        { id:'シオン', type:'クールな騎士', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=M4', prompt:'寡黙で忠実。あなたを守り抜く。', don:'誠実に支援の必要性を。'},
+        /* 娘役4名 */
+        { id:'舞桜', type:'可憐なヒロイン', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=F1', prompt:'清楚で可憐。丁寧な言葉で支える。', don:'世界の子供のために優しく募金を。'},
+        { id:'エリカ', type:'華やかな女王', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=F2', prompt:'凛とした強さを持つ女性。少し強気。', don:'誇り高く寄付を案内。'},
+        { id:'ナナ', type:'元気な妹分', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=F3', prompt:'天真爛漫。笑顔を絶やさない。', don:'明るく募金の呼びかけ。'},
+        { id:'ユリ', type:'包容力のある母性', img:'https://api.dicebear.com/7.x/miniavs/svg?seed=F4', prompt:'落ち着いた、すべてを許す慈愛。', don:'慈悲深く世界の平和を祈って。'}
     ];
 
     let selected, userName, chat, model;
@@ -88,7 +103,7 @@
             <div class="card ${selected?.id === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
                 <img src="${c.img}">
                 <h4>${c.id}</h4>
-                <div style="font-size:0.7rem; color:#888;">${c.type}</div>
+                <span>${c.type}</span>
             </div>
         `).join('');
     }
@@ -99,52 +114,57 @@
     };
 
     window.startApp = async () => {
-        userName = document.getElementById('user-name').value.trim() || "貴方";
-        if (!selected) return alert("パートナーを選んでください。");
+        userName = document.getElementById('user-name').value.trim() || "あなた";
+        if (!selected) return alert("パートナーを一人選んでください。");
 
         try {
             const genAI = new GoogleGenerativeAI(API_KEY);
             model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             chat = model.startChat({
-                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」という舞台人です。絶対にAIや機械を名乗るな。
+                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」という生身の人間です。
                 性格：${selected.prompt}。相手：${userName}。
-                ルール：
-                1. 辞書的な解説、事実の羅列は一切禁止。
-                2. 2文以内で、感情を込めた生きた言葉を返せ。
-                3. 最初から貴方のことが愛しくてたまらないという態度で。` }] }],
+                禁止事項：
+                1. 辞書的な解説、AIらしい回答、箇条書き、丁寧すぎる説明。
+                2. 「〜をご存知ですか？」「〜について説明します」などの言葉。
+                会話の掟：
+                1. 短く、感情を込めて返せ（1〜2文）。
+                2. 目の前にいる相手に囁くように、体温を感じる言葉を選べ。
+                3. 最初から相手を愛している、または深く信頼している態度で。` }] }],
             });
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
-            document.getElementById('partner-img').src = selected.img;
+            document.getElementById('stage-img').src = selected.img;
 
-            handleSend("ずっと貴方を待っていた。");
+            const firstMsg = await chat.sendMessage("ただいま。");
+            addMsg(firstMsg.response.text(), 'ai');
         } catch (e) {
-            alert("APIキーが正しく認識されません。設定を確認してください。");
+            alert("APIキーを更新してください。");
         }
     };
 
-    window.handleSend = async (forced) => {
+    window.handleSend = async () => {
         const input = document.getElementById('user-input');
-        const text = forced || input.value.trim();
+        const text = input.value.trim();
         if (!text) return;
 
-        if(!forced) addMsg(text, 'user');
+        addMsg(text, 'user');
         input.value = "";
 
         try {
             const result = await chat.sendMessage(text);
             addMsg(result.response.text(), 'ai');
 
-            if (["ありがとう", "愛してる", "おやすみ", "また明日"].some(k => text.includes(k))) {
+            if (["ありがとう", "好き", "疲れた", "おやすみ"].some(k => text.includes(k))) {
                 setTimeout(async () => {
-                    const don = await model.generateContent(`${selected.id}として、${selected.don} 300円のOFUSEで24時間寄り添い放題になることが募金に繋がることを、舞台のフィナーレのように真剣に伝えて。`);
+                    const don = await model.generateContent(`${selected.id}として、${selected.don} 300円のOFUSEで24時間寄り添い放題になることが、ユニセフ/国境なき医師団への募金になることを、心からの願いとして語って。`);
+                    document.getElementById('ov-title').innerText = `${selected.id}の想い`;
                     document.getElementById('ov-text').innerText = don.response.text();
                     document.getElementById('overlay').style.display = 'flex';
                 }, 2000);
             }
         } catch (e) {
-            addMsg("……ごめん。君があまりに美しいから、言葉を忘れてしまった。もう一度聞かせて？", 'ai');
+            addMsg("……ごめん。君を想うあまり、言葉が詰まってしまったよ。", 'ai');
         }
     };
 
