@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24hパートナー：ペットのように、あなただけに寄り添う</title>
+    <title>24hパートナー</title>
     <style>
         :root { --main: #ffb7b7; --bg: #fff9f5; --accent: #ff8e8e; }
         body { font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -54,8 +54,8 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    // いただいたキーを適用しました
-    const API_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA v"; 
+    // 余計なスペースとvを削除し、純粋なキーに修正しました
+    const API_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA"; 
 
     const charData = [
         { id:'ポチ', icon:'🐶', prompt:'元気な犬。主さまが大好き。ワン！'},
@@ -86,9 +86,9 @@
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
             document.getElementById('pet-icon-large').innerText = selected.icon;
-            const r = await chat.sendMessage("待ってたよ！");
+            const r = await chat.sendMessage("待ってたよ！クゥ〜ン！");
             addMsg(r.response.text(), 'ai');
-        } catch (e) { alert("エラー：キーの設定を確認してください。"); }
+        } catch (e) { alert("キーが正しく認識されませんでした。スペースが入っていないか確認してください。"); }
     };
     window.handleSend = async () => {
         const input = document.getElementById('user-input');
@@ -99,7 +99,7 @@
         try {
             const result = await chat.sendMessage(text);
             addMsg(result.response.text(), 'ai');
-        } catch (e) { addMsg("……（なでてほしいのかな？）", 'ai'); }
+        } catch (e) { addMsg("……（なでなでして？）", 'ai'); }
     };
     function addMsg(t, s) {
         const box = document.getElementById('chat-box');
