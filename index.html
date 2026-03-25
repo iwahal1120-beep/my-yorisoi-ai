@@ -11,72 +11,72 @@
         .header { background: var(--main-color); color: white; padding: 15px; font-weight: bold; text-align: center; z-index: 10; }
         
         .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .setup-item { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; color: #666; }
-        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 16px; }
+        .setup-item { margin-bottom: 20px; text-align: center; }
+        label { display: block; font-size: 1rem; margin-bottom: 10px; font-weight: bold; color: #444; }
+        input[type="text"] { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 15px; box-sizing: border-box; outline: none; font-size: 18px; text-align: center; }
         
         .gender-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
-        .g-btn { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; background: white; cursor: pointer; font-weight: bold; }
+        .g-btn { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #eee; background: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .g-btn.active { background: var(--main-color); color: white; border-color: var(--main-color); }
         
-        .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .char-card { border: 2px solid #eee; border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; background: white; }
-        .char-card img { width: 50px; height: 50px; border-radius: 50%; background: #eee; margin-bottom: 5px; object-fit: cover; }
-        .char-card.selected { border-color: var(--main-color); background: #fff5f5; }
-        .char-card h4 { margin: 2px 0; font-size: 0.8rem; }
+        .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .char-card { border: 2px solid #eee; border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; background: white; transition: 0.2s; }
+        .char-card img { width: 60px; height: 60px; border-radius: 50%; background: #eee; margin-bottom: 5px; object-fit: cover; }
+        .char-card.selected { border-color: var(--main-color); background: #fff5f5; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .char-card h4 { margin: 5px 0 2px; font-size: 0.9rem; }
+        .char-card p { margin: 0; font-size: 0.7rem; color: #888; }
 
         #chat-screen { display: none; flex-direction: column; height: 100%; padding: 0; }
-        #portrait-area { height: 160px; display: flex; justify-content: center; align-items: center; background: #fffafb; border-bottom: 1px solid #eee; }
-        #char-portrait { height: 90%; object-fit: contain; transition: 0.3s; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #fffafb; }
-        .msg { padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; }
-        .ai-msg { background: #ffe4e6; align-self: flex-start; border-bottom-left-radius: 2px; }
+        #portrait-area { height: 200px; display: flex; justify-content: center; align-items: center; background: #fffafb; border-bottom: 1px solid #eee; position: relative; }
+        #char-portrait { height: 90%; object-fit: contain; transition: 0.3s; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background: #fffafb; }
+        .msg { padding: 12px 16px; border-radius: 20px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .ai-msg { background: #ffe4e6; align-self: flex-start; border-bottom-left-radius: 2px; color: #444; }
         .user-msg { background: var(--main-color); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
 
         #donation-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.98); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; z-index: 100; }
-        .ofuse-btn { background: #ff4500; color: white; text-decoration: none; padding: 15px 30px; border-radius: 30px; font-weight: bold; margin-top: 20px; }
+        .ofuse-btn { background: #ff4500; color: white; text-decoration: none; padding: 18px 35px; border-radius: 35px; font-weight: bold; margin-top: 25px; box-shadow: 0 5px 15px rgba(255,69,0,0.3); font-size: 1.1rem; }
 
-        .footer { padding: 12px; border-top: 1px solid #eee; display: flex; gap: 8px; background: white; }
-        .footer input { flex: 1; border: none; background: #f0f0f0; padding: 10px 15px; border-radius: 20px; outline: none; }
-        .send-btn { background: var(--main-color); color: white; border: none; padding: 0 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        
-        .error-log { color: red; font-size: 0.7rem; margin-top: 10px; display: none; }
+        .footer { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
+        .footer input { flex: 1; border: none; background: #f5f5f5; padding: 12px 20px; border-radius: 25px; outline: none; font-size: 16px; }
+        .send-btn { background: var(--main-color); color: white; border: none; padding: 0 25px; border-radius: 25px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <div class="header" id="app-header">パートナー設定</div>
+    <div class="header" id="app-header">寄り添いAIパートナー</div>
 
     <div id="setup-screen" class="screen">
         <div class="setup-item">
-            <label>Gemini APIキー</label>
-            <input type="text" id="api-key" placeholder="AIzaSy...">
-        </div>
-        <div class="setup-item">
             <label>あなたのニックネーム</label>
-            <input type="text" id="user-name" placeholder="たろう" maxlength="10">
+            <input type="text" id="user-name" placeholder="例：たろう" maxlength="10">
         </div>
+        
         <div class="gender-toggle">
-            <button class="g-btn active" id="btn-f" onclick="window.toggleGender('f')">女性（5名）</button>
-            <button class="g-btn" id="btn-m" onclick="window.toggleGender('m')">男性（5名）</button>
+            <button class="g-btn active" id="btn-f" onclick="window.toggleGender('f')">女性キャラ（5名）</button>
+            <button class="g-btn" id="btn-m" onclick="window.toggleGender('m')">男性キャラ（5名）</button>
         </div>
+        
         <div class="char-grid" id="char-grid"></div>
-        <button id="start-btn" style="margin-top:20px; padding:15px; background:var(--main-color); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">会話を始める</button>
-        <div id="error-display" class="error-log"></div>
+        
+        <button id="start-btn" style="margin-top:25px; padding:18px; background:var(--main-color); color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer; font-size:1.1rem; box-shadow: 0 5px 15px rgba(255,183,183,0.4);">この人に寄り添ってもらう</button>
     </div>
 
     <div id="chat-screen" class="screen">
         <div id="portrait-area"><img id="char-portrait" src=""></div>
         <div id="chat-box"></div>
+        
         <div id="donation-overlay">
-            <h2 style="color:#ff4500;">大切なお願い</h2>
-            <p id="donation-text" style="font-size:0.9rem; color:#444; margin-bottom:10px;"></p>
-            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" class="ofuse-btn">OFUSEで募金・応援する</a>
-            <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:blue; cursor:pointer; text-decoration:underline;">TOPに戻る</button>
+            <h2 style="color:#ff4500;">最後にお願い…</h2>
+            <p id="donation-text" style="font-size:1rem; color:#444; line-height:1.6;"></p>
+            <p style="font-size:0.8rem; color:#888; background:#f0f0f0; padding:10px; border-radius:10px;">（※収益はユニセフや国境なき医師団へ募金されます）</p>
+            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" class="ofuse-btn">OFUSEで世界を救う</a>
+            <button onclick="location.reload()" style="margin-top:25px; background:none; border:none; color:#999; cursor:pointer; text-decoration:underline;">TOPに戻る</button>
         </div>
+        
         <div class="footer">
-            <input type="text" id="user-input" placeholder="メッセージを入力...">
+            <input type="text" id="user-input" placeholder="悩みや、今日あったことを話して…">
             <button class="send-btn" id="send-btn">送信</button>
         </div>
     </div>
@@ -88,22 +88,25 @@
 
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
-AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA
+
+    // 埋め込みAPIキー（利用者は入力不要）
+    const KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA";
+
     const P = "https://via.placeholder.com/300x400";
     const charData = {
         f: [
-            { id:'f1', name:'ひまり', type:'癒やし', color:'#ffb7b7', imgs:{normal:`${P}/ffb7b7?text=Himari`, happy:`${P}/ffcccc?text=Himari_Joy`, sad:`${P}/ffe4e6?text=Himari_Sad`, angry:`${P}/ff8888?text=Himari_Ser`}, prompt:'可愛く甘やかす癒やし系。', donation:'ユニセフ募金のお願い。'},
-            { id:'f2', name:'シズク', type:'お姉様', color:'#a2d2ff', imgs:{normal:`${P}/a2d2ff?text=Shizuku`, happy:`${P}/e0f7fa?text=Shizuku_Joy`, sad:`${P}/b3e5fc?text=Shizuku_Sad`, angry:`${P}/4fc3f7?text=Shizuku_Ser`}, prompt:'知的な敬語お姉様。', donation:'寄付の案内。'},
-            { id:'f3', name:'あかり', type:'元気', color:'#ffcc00', imgs:{normal:`${P}/ffcc00?text=Akari`, happy:`${P}/fff9c4?text=Akari_Joy`, sad:`${P}/fff176?text=Akari_Sad`, angry:`${P}/fbc02d?text=Akari_Ser`}, prompt:'活発な妹分。', donation:'熱く支援を。'},
-            { id:'f4', name:'ルナ', type:'ツンデレ', color:'#e0e0e0', imgs:{normal:`${P}/e0e0e0?text=Luna`, happy:`${P}/f5f5f5?text=Luna_Joy`, sad:`${P}/eeeeee?text=Luna_Sad`, angry:`${P}/bdbdbd?text=Luna_Ser`}, prompt:'ツンデレ。', donation:'照れながら寄付。'},
-            { id:'f5', name:'サクラ', type:'母性', color:'#a5d6a7', imgs:{normal:`${P}/a5d6a7?text=Sakura`, happy:`${P}/e8f5e9?text=Sakura_Joy`, sad:`${P}/c8e6c9?text=Sakura_Sad`, angry:`${P}/81c784?text=Sakura_Ser`}, prompt:'包容力ある母性。', donation:'優しく募金を。'}
+            { id:'f1', name:'ひまり', type:'癒やし', color:'#ffb7b7', imgs:{normal:`${P}/ffb7b7?text=Himari`, happy:`${P}/ffcccc?text=Himari_Joy`, sad:`${P}/ffe4e6?text=Himari_Sad`, angry:`${P}/ff8888?text=Himari_Ser`}, prompt:'可愛く甘やかす。語尾は「〜だよ」「〜だね」。', donation:'ユニセフ募金のお願いを可愛く真剣に。'},
+            { id:'f2', name:'シズク', type:'お姉様', color:'#a2d2ff', imgs:{normal:`${P}/a2d2ff?text=Shizuku`, happy:`${P}/e0f7fa?text=Shizuku_Joy`, sad:`${P}/b3e5fc?text=Shizuku_Sad`, angry:`${P}/4fc3f7?text=Shizuku_Ser`}, prompt:'知的な敬語お姉様。落ち着いた雰囲気。', donation:'大人の余裕で寄付の重要性を。'},
+            { id:'f3', name:'あかり', type:'元気', color:'#ffcc00', imgs:{normal:`${P}/ffcc00?text=Akari`, happy:`${P}/fff9c4?text=Akari_Joy`, sad:`${P}/fff176?text=Akari_Sad`, angry:`${P}/fbc02d?text=Akari_Ser`}, prompt:'活発な妹分。元気いっぱい。', donation:'熱血に、国境なき医師団への協力を。'},
+            { id:'f4', name:'ルナ', type:'ツンデレ', color:'#e0e0e0', imgs:{normal:`${P}/e0e0e0?text=Luna`, happy:`${P}/f5f5f5?text=Luna_Joy`, sad:`${P}/eeeeee?text=Luna_Sad`, angry:`${P}/bdbdbd?text=Luna_Ser`}, prompt:'ツンデレ。最初は冷たいが実は優しい。', donation:'照れながら寄付のお願いを。'},
+            { id:'f5', name:'サクラ', type:'母性', color:'#a5d6a7', imgs:{normal:`${P}/a5d6a7?text=Sakura`, happy:`${P}/e8f5e9?text=Sakura_Joy`, sad:`${P}/c8e6c9?text=Sakura_Sad`, angry:`${P}/81c784?text=Sakura_Ser`}, prompt:'包容力あるお母さん的性格。', donation:'優しく世界の子供たちのための募金を。'}
         ],
         m: [
-            { id:'m1', name:'カイト', type:'熱血', color:'#ff7043', imgs:{normal:`${P}/ff7043?text=Kaito`, happy:`${P}/ffab91?text=Kaito_Joy`, sad:`${P}/ff8a65?text=Kaito_Sad`, angry:`${P}/e64a19?text=Kaito_Ser`}, prompt:'熱い兄貴分。', donation:'熱い支援を。'},
-            { id:'m2', name:'レイ', type:'クール', color:'#82ccdd', imgs:{normal:`${P}/82ccdd?text=Rei`, happy:`${P}/b2ebf2?text=Rei_Joy`, sad:`${P}/e0f7fa?text=Rei_Sad`, angry:`${P}/4dd0e1?text=Rei_Ser`}, prompt:'冷静なアドバイス。', donation:'論理的に寄付。'},
-            { id:'m3', name:'ソウタ', type:'ワンコ', color:'#dce775', imgs:{normal:`${P}/dce775?text=Sota`, happy:`${P}/f0f4c3?text=Sota_Joy`, sad:`${P}/e6ee9c?text=Sota_Sad`, angry:`${P}/c0ca33?text=Sota_Ser`}, prompt:'懐っこい後輩。', donation:'健気にお願い。'},
-            { id:'m4', name:'アキラ', type:'面白い', color:'#ba68c8', imgs:{normal:`${P}/ba68c8?text=Akira`, happy:`${P}/e1bee7?text=Akira_Joy`, sad:`${P}/ce93d8?text=Akira_Sad`, angry:`${P}/8e24aa?text=Akira_Ser`}, prompt:'ムードメーカー。', donation:'明るく寄付の話。'},
-            { id:'m5', name:'ハルカ', type:'執事', color:'#90a4ae', imgs:{normal:`${P}/90a4ae?text=Haruka`, happy:`${P}/cfd8dc?text=Haruka_Joy`, sad:`${P}/b0bec5?text=Haruka_Sad`, angry:`${P}/546e7a?text=Haruka_Ser`}, prompt:'丁寧な執事。', donation:'恭しく案内。'}
+            { id:'m1', name:'カイト', type:'熱血', color:'#ff7043', imgs:{normal:`${P}/ff7043?text=Kaito`, happy:`${P}/ffab91?text=Kaito_Joy`, sad:`${P}/ff8a65?text=Kaito_Sad`, angry:`${P}/e64a19?text=Kaito_Ser`}, prompt:'熱い兄貴分。一人称は俺。', donation:'男らしく、国境なき医師団への支援を。'},
+            { id:'m2', name:'レイ', type:'クール', color:'#82ccdd', imgs:{normal:`${P}/82ccdd?text=Rei`, happy:`${P}/b2ebf2?text=Rei_Joy`, sad:`${P}/e0f7fa?text=Rei_Sad`, angry:`${P}/4dd0e1?text=Rei_Ser`}, prompt:'冷静沈着。理性的。', donation:'論理的に寄付の仕組みを説明。'},
+            { id:'m3', name:'ソウタ', type:'ワンコ', color:'#dce775', imgs:{normal:`${P}/dce775?text=Sota`, happy:`${P}/f0f4c3?text=Sota_Joy`, sad:`${P}/e6ee9c?text=Sota_Sad`, angry:`${P}/c0ca33?text=Sota_Ser`}, prompt:'懐っこい後輩。可愛い。', donation:'健気にお願い。'},
+            { id:'m4', name:'アキラ', type:'面白い', color:'#ba68c8', imgs:{normal:`${P}/ba68c8?text=Akira`, happy:`${P}/e1bee7?text=Akira_Joy`, sad:`${P}/ce93d8?text=Akira_Sad`, angry:`${P}/8e24aa?text=Akira_Ser`}, prompt:'ムードメーカー。冗談多め。', donation:'明るく寄付を呼びかける。'},
+            { id:'m5', name:'ハルカ', type:'執事', color:'#90a4ae', imgs:{normal:`${P}/90a4ae?text=Haruka`, happy:`${P}/cfd8dc?text=Haruka_Joy`, sad:`${P}/b0bec5?text=Haruka_Sad`, angry:`${P}/546e7a?text=Haruka_Ser`}, prompt:'丁寧な執事。献身的。', donation:'恭しく社会貢献の案内を。'}
         ]
     };
 
@@ -135,35 +138,24 @@ AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA
     };
 
     async function startApp() {
-        const apiKey = document.getElementById('api-key').value.trim();
         userName = document.getElementById('user-name').value.trim() || "あなた";
-        const errorDisp = document.getElementById('error-display');
-        
-        if (!apiKey) { alert("APIキーを入力してください。"); return; }
-        if (!selectedChar) { alert("キャラを選んでね！"); return; }
-
-        localStorage.setItem('gemini_api_key', apiKey);
-        localStorage.setItem('user_nickname', userName);
+        if (!selectedChar) { alert("寄り添ってほしいパートナーを選んでね！"); return; }
 
         try {
-            const genAI = new GoogleGenerativeAI(apiKey);
+            const genAI = new GoogleGenerativeAI(KEY);
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             chat = model.startChat({
-                history: [{ role: "user", parts: [{ text: `命令：君は「${selectedChar.name}」という性格：${selectedChar.prompt}。相手の名前は${userName}。親しみやすく短めに返信して。返信の最後に必ず[HAPPY][SAD][ANGRY][NORMAL]のどれか1つを付けて。` }] }],
+                history: [{ role: "user", parts: [{ text: `命令：君は「${selectedChar.name}」として、${selectedChar.prompt}で振る舞ってください。相手の名前は${userName}。親しみやすく2〜3文で短く返信して。返信の最後に必ず[HAPPY][SAD][ANGRY][NORMAL]のいずれか1つを付けて。` }] }],
             });
-
-            // テスト通信
-            await chat.sendMessage("こんにちは");
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
             document.getElementById('app-header').innerText = selectedChar.name;
             setPortrait('normal');
-            addMsg(`${userName}くん、お帰り！待ってたよ！`, 'ai');
+            
+            addMsg(`${userName}くん、待ってたよ！今日はどんな一日だった？`, 'ai');
         } catch (e) {
-            errorDisp.style.display = 'block';
-            errorDisp.innerText = "エラー: APIキーが無効か、通信に失敗しました。キーを再確認してください。";
-            console.error(e);
+            alert("通信エラーが発生しました。時間を置いて試してね。");
         }
     }
 
@@ -188,19 +180,24 @@ AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA
 
             addMsg(responseText.replace(/\[.*?\]/g, ""), 'ai');
 
-            if (["おやすみ", "ありがとう", "助かった", "また明日", "バイバイ"].some(k => text.includes(k))) {
+            // 終了のキーワードで募金案内を発動
+            if (["おやすみ", "ありがとう", "助かった", "また明日", "バイバイ", "さよなら"].some(k => text.includes(k))) {
                 isDonationPhase = true;
-                setTimeout(() => {
-                    setPortrait('angry');
-                    addMsg("あ、最後に一つ、大切なお願いがあるんだけど…いいかな？", "ai");
+                setTimeout(async () => {
+                    setPortrait('angry'); // 真剣な表情
+                    const genAI = new GoogleGenerativeAI(KEY);
+                    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                    const donResult = await model.generateContent(`君は${selectedChar.name}。${selectedChar.donation} 24時間寄り添い放題になるOFUSE(300円)と、ユニセフ/国境なき医師団への募金を真剣にお願いして。`);
+                    const donText = donResult.response.text();
+                    addMsg(donText, 'ai');
                     setTimeout(() => {
-                        addMsg(`このアプリはユニセフや国境なき医師団への募金を目的としているんだ。もしよければOFUSEから応援してくれると嬉しいな！`, 'ai');
+                        document.getElementById('donation-text').innerText = donText;
                         document.getElementById('donation-overlay').style.display = 'flex';
-                    }, 2000);
+                    }, 3000);
                 }, 1500);
             }
         } catch (e) {
-            addMsg("（AIが少し疲れちゃったみたい。時間を置いてみてね）", 'ai');
+            addMsg("（AIが少し疲れちゃったみたい。少し時間を置いてみてね）", 'ai');
         }
     }
 
@@ -214,12 +211,7 @@ AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA
         document.getElementById('char-portrait').src = selectedChar.imgs[emo];
     }
 
-    // 初期設定
-    const savedKey = localStorage.getItem('gemini_api_key');
-    if (savedKey) document.getElementById('api-key').value = savedKey;
-    const savedName = localStorage.getItem('user_nickname');
-    if (savedName) document.getElementById('user-name').value = savedName;
-    
+    // イベント設定
     document.getElementById('start-btn').addEventListener('click', startApp);
     document.getElementById('send-btn').addEventListener('click', handleSend);
     renderChars();
