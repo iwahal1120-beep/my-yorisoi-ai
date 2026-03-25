@@ -3,66 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24h Partners</title>
+    <title>Royal Partners - 究極の寄り添い</title>
     <style>
-        :root { --main: #ff8fa3; --bg: #fff9f9; }
-        body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        #app { width: 95%; max-width: 400px; height: 90vh; background: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        :root { --gold: #c5a059; --royal: #1a1a2e; --rose: #e94560; }
+        body { font-family: 'serif'; background: #0f0e17; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        #app { width: 95%; max-width: 400px; height: 90vh; background: #fff; border-radius: 30px; border: 2px solid var(--gold); overflow: hidden; display: flex; flex-direction: column; position: relative; }
         
-        .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        h2 { text-align: center; color: #555; font-size: 1.1rem; margin-bottom: 20px; }
-        input[type="text"] { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 15px; text-align: center; font-size: 1rem; outline: none; margin-bottom: 20px; }
-        
-        /* キャラ選択：男女を明確に分離 */
-        .section-label { font-size: 0.8rem; font-weight: bold; color: #999; margin: 10px 0; border-bottom: 1px solid #eee; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .card { border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #f0f0f0; transition: 0.2s; }
-        .card img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
-        .card.selected { border-color: var(--main); background: #fff5f6; transform: scale(1.02); }
-        .card h4 { margin: 5px 0; font-size: 0.9rem; }
+        .header { background: var(--royal); color: var(--gold); padding: 18px; text-align: center; font-weight: bold; border-bottom: 2px solid var(--gold); font-size: 1.2rem; }
+        .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; background: #fffaf5; }
 
-        /* チャット画面 */
+        /* キャラ選択：イラストAC風の華やかさを意識 */
+        .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid #eee; background: white; transition: 0.3s; }
+        .card img { width: 100px; height: 120px; border-radius: 10px; object-fit: cover; border: 2px solid var(--gold); margin-bottom: 8px; }
+        .card.selected { border-color: var(--rose); background: #fff0f3; transform: scale(1.05); }
+
+        /* チャット画面：舞台の雰囲気を演出 */
         #chat-screen { display: none; flex-direction: column; height: 100%; }
-        .chat-header { padding: 15px; text-align: center; border-bottom: 1px solid #eee; font-weight: bold; background: #fff; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background: #fffafb; }
-        .msg { padding: 12px 16px; border-radius: 20px; max-width: 75%; font-size: 0.95rem; line-height: 1.5; }
-        .ai { background: white; align-self: flex-start; border: 1px solid #ffe4e6; border-bottom-left-radius: 2px; }
-        .user { background: var(--main); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        #partner-view { height: 220px; background: linear-gradient(to bottom, var(--royal), #fff); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px; }
+        #partner-img { height: 200px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
+        
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { padding: 14px 18px; border-radius: 20px; max-width: 80%; line-height: 1.6; font-size: 1rem; }
+        .ai { background: white; border: 1.5px solid var(--gold); align-self: flex-start; border-bottom-left-radius: 3px; }
+        .user { background: var(--royal); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
 
         .footer { padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid #eee; }
-        #user-input { flex: 1; border: none; background: #f0f0f0; padding: 12px 18px; border-radius: 25px; outline: none; }
-        .send-btn { background: var(--main); color: white; border: none; padding: 0 20px; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        input[type="text"] { flex: 1; border: none; background: #f0f0f0; padding: 12px 20px; border-radius: 30px; outline: none; }
+        .send-btn { background: var(--rose); color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
 
-        #overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.98); display: none; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; z-index: 100; }
+        #overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 100; }
     </style>
 </head>
 <body>
 
 <div id="app">
+    <div class="header">Royal AI Partners</div>
+
     <div id="setup-screen" class="screen">
-        <h2>あなたの名前を教えて？</h2>
-        <input type="text" id="user-name" placeholder="ニックネーム">
+        <h3 style="text-align:center; color:var(--royal);">貴方の名前を教えて、我が友よ</h3>
+        <input type="text" id="user-name" placeholder="お名前（ニックネーム）" style="width:100%; box-sizing:border-box; padding:15px; margin-bottom:20px; border-radius:15px; border:1px solid #ddd; text-align:center;">
         
-        <div class="section-label">女性パートナー</div>
-        <div class="grid" id="f-grid"></div>
+        <div class="char-grid" id="grid"></div>
         
-        <div class="section-label">男性パートナー</div>
-        <div class="grid" id="m-grid"></div>
-        
-        <button onclick="startApp()" style="padding:18px; background:var(--main); color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer; font-size:1rem;">この人と話す</button>
+        <button onclick="startApp()" style="margin-top:30px; padding:20px; background:var(--royal); color:var(--gold); border:2px solid var(--gold); border-radius:20px; font-weight:bold; cursor:pointer; font-size:1.1rem; width:100%;">幕を上げる</button>
     </div>
 
     <div id="chat-screen">
-        <div class="chat-header" id="chat-title">パートナー</div>
+        <div id="partner-view"><img id="partner-img" src=""></div>
         <div id="chat-box"></div>
         <div id="overlay">
-            <h3 id="ov-title"></h3>
-            <p id="ov-text" style="font-size:0.9rem; line-height:1.6;"></p>
-            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" style="background:#ff4500; color:white; text-decoration:none; padding:15px 30px; border-radius:30px; font-weight:bold; margin-top:15px; display:inline-block;">応援して募金する</a>
-            <button onclick="location.reload()" style="margin-top:20px; background:none; border:none; color:#999; cursor:pointer;">TOPへ</button>
+            <h2 style="color:var(--gold);">最後に、お伝えしたいことが…</h2>
+            <p id="ov-text" style="line-height:1.8;"></p>
+            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" style="background:var(--gold); color:black; text-decoration:none; padding:15px 30px; border-radius:30px; font-weight:bold; margin-top:20px; display:inline-block;">愛の募金（OFUSE）</a>
+            <button onclick="location.reload()" style="margin-top:20px; color:#999; background:none; border:none; text-decoration:underline;">再演する</button>
         </div>
         <div class="footer">
-            <input type="text" id="user-input" placeholder="なにか話して…">
+            <input type="text" id="user-input" placeholder="愛や悩みを綴ってください…">
             <button class="send-btn" onclick="handleSend()">送信</button>
         </div>
     </div>
@@ -75,90 +72,79 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
+    // ★ここに新しいAPIキー（AI Studioで作成したもの）を貼り付けてください
     const API_KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA";
-    const I = (seed) => `https://api.dicebear.com/7.x/notionists/svg?seed=${seed}`;
 
-    const charData = {
-        f: [
-            { id:'ひまり', type:'甘えさせてくれる', img:I('Sheba'), color:'#ff8fa3', prompt:'20代女性。優しくておっとり。ユーザーを全力で肯定する。口調は「〜だよ」「〜かな」。', don:'世界の子供たちのための募金を、大切なお願いとして伝えて。'},
-            { id:'シズク', type:'知的なお姉さん', img:I('Sasha'), color:'#89cff0', prompt:'30代女性。クールだけど情に厚い。落ち着いた口調で悩みを聞く。', don:'社会貢献の第一歩として募金を案内して。'}
-        ],
-        m: [
-            { id:'カイト', type:'熱い兄貴分', img:I('Felix'), color:'#ff7f50', prompt:'20代男性。真っ直ぐで熱い性格。一人称は俺。相棒のように励ます。', don:'熱い想いで、募金が世界を変えることを語って。'},
-            { id:'レイ', type:'物静かな青年', img:I('Oliver'), color:'#b0c4de', prompt:'20代男性。理性的で静か。短い言葉で核心を突く。', don:'誠実に、寄付の意義を伝えて。'}
-        ]
-    };
+    // イラストAC風の気品あるキャラクター（高画質プレースホルダ）
+    const charData = [
+        { id:'美剣（ミツルギ）', type:'麗しの男役', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop', prompt:'宝塚のトップスター男役。情熱的でキザ。貴方を「私の運命」として扱う。辞書のような説明は一切禁止。', don:'ユニセフ募金を、世界を愛で満たすための情熱的な願いとして。'},
+        { id:'舞桜（マオ）', type:'可憐な娘役', img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=500&fit=crop', prompt:'宝塚の娘役。清楚で可憐。丁寧な敬語で、貴方を献身的に支える一途な想い。', don:'国境なき医師団への協力を、清らかな祈りとして伝えて。'}
+    ];
 
     let selected, userName, chat, model;
 
     function render() {
-        ['f', 'm'].forEach(g => {
-            document.getElementById(`${g}-grid`).innerHTML = charData[g].map(c => `
-                <div class="card ${selected?.id === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
-                    <img src="${c.img}">
-                    <h4>${c.id}</h4>
-                    <div style="font-size:0.7rem; color:#888;">${c.type}</div>
-                </div>
-            `).join('');
-        });
+        document.getElementById('grid').innerHTML = charData.map(c => `
+            <div class="card ${selected?.id === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
+                <img src="${c.img}">
+                <h4>${c.id}</h4>
+                <div style="font-size:0.7rem; color:#888;">${c.type}</div>
+            </div>
+        `).join('');
     }
 
     window.selectChar = (id) => {
-        selected = [...charData.f, ...charData.m].find(c => c.id === id);
+        selected = charData.find(c => c.id === id);
         render();
     };
 
     window.startApp = async () => {
-        userName = document.getElementById('user-name').value.trim() || "キミ";
-        if (!selected) return alert("パートナーを選んでね！");
+        userName = document.getElementById('user-name').value.trim() || "貴方";
+        if (!selected) return alert("パートナーを選んでください。");
 
         try {
             const genAI = new GoogleGenerativeAI(API_KEY);
             model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             chat = model.startChat({
-                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」という一人の人間です。絶対にAIだと言わないで。
+                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」という舞台人です。絶対にAIや機械を名乗るな。
                 性格：${selected.prompt}。相手：${userName}。
                 ルール：
-                1. 辞書のような説明、解説は一切禁止。
-                2. 友達と話すような「話し言葉（口語）」で返信して。
-                3. 返信は短く、最大でも2文まで。
-                4. 会話の最初から、親密に接して。` }] }],
+                1. 辞書的な解説、事実の羅列は一切禁止。
+                2. 2文以内で、感情を込めた生きた言葉を返せ。
+                3. 最初から貴方のことが愛しくてたまらないという態度で。` }] }],
             });
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
-            document.getElementById('chat-title').innerText = selected.id;
+            document.getElementById('partner-img').src = selected.img;
 
-            // 最初の生きた第一声
-            const firstMsg = await chat.sendMessage("ヤッホー！");
-            addMsg(firstMsg.response.text(), 'ai');
+            handleSend("ずっと貴方を待っていた。");
         } catch (e) {
-            alert("通信エラー。APIキーが間違っているか、期限切れの可能性があります。");
+            alert("APIキーが正しく認識されません。設定を確認してください。");
         }
     };
 
-    window.handleSend = async () => {
+    window.handleSend = async (forced) => {
         const input = document.getElementById('user-input');
-        const text = input.value.trim();
+        const text = forced || input.value.trim();
         if (!text) return;
 
-        addMsg(text, 'user');
+        if(!forced) addMsg(text, 'user');
         input.value = "";
 
         try {
             const result = await chat.sendMessage(text);
             addMsg(result.response.text(), 'ai');
 
-            if (["ありがとう", "バイバイ", "おやすみ"].some(k => text.includes(k))) {
+            if (["ありがとう", "愛してる", "おやすみ", "また明日"].some(k => text.includes(k))) {
                 setTimeout(async () => {
-                    const don = await model.generateContent(`${selected.id}として、${selected.don} 300円のOFUSEで24時間寄り添い放題になること、それがユニセフ/国境なき医師団へ募金されることを、人間らしい口調でお願いして。`);
-                    document.getElementById('ov-title').innerText = `${selected.id}からのお願い`;
+                    const don = await model.generateContent(`${selected.id}として、${selected.don} 300円のOFUSEで24時間寄り添い放題になることが募金に繋がることを、舞台のフィナーレのように真剣に伝えて。`);
                     document.getElementById('ov-text').innerText = don.response.text();
                     document.getElementById('overlay').style.display = 'flex';
-                }, 1500);
+                }, 2000);
             }
         } catch (e) {
-            addMsg("……ごめん。今ちょっと電波悪いみたい。もう一度送って？", 'ai');
+            addMsg("……ごめん。君があまりに美しいから、言葉を忘れてしまった。もう一度聞かせて？", 'ai');
         }
     };
 
