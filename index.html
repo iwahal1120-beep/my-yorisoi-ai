@@ -8,17 +8,18 @@
         :root { --main: #ffb7b7; --bg: #fff9f5; --accent: #ff8e8e; }
         body { font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         #app { width: 95%; max-width: 400px; height: 92vh; background: white; border-radius: 30px; border: 4px solid var(--main); overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 15px 35px rgba(255,183,183,0.3); }
-        .header { background: var(--main); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #fff; }
+        .header { background: var(--main); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 0.9rem; }
         .screen { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
         .setup-box { background: #fffcf9; padding: 15px; border-radius: 20px; border: 1px solid #ffe4e6; margin-bottom: 15px; text-align: center; }
         input[type="text"] { width: 80%; padding: 10px; border: none; border-bottom: 2px solid var(--main); font-size: 1rem; text-align: center; outline: none; background: transparent; }
         .char-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .card { border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #f0f0f0; background: white; transition: 0.2s; }
         .card.selected { border-color: var(--accent); background: #fff5f5; transform: scale(1.02); }
-        .card .icon { font-size: 3rem; margin-bottom: 5px; }
+        .card .icon { font-size: 2.5rem; margin-bottom: 5px; }
+        .card h4 { margin: 5px 0; font-size: 0.85rem; color: #555; }
         #chat-screen { display: none; flex-direction: column; height: 100%; background: #fffafb; }
-        #pet-view { height: 160px; background: linear-gradient(180deg, #ffe4e6, #fffafb); display: flex; justify-content: center; align-items: center; flex-direction: column; }
-        #pet-icon-large { font-size: 5rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        #pet-view { height: 140px; background: linear-gradient(180deg, #ffe4e6, #fffafb); display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #pet-icon-large { font-size: 4.5rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
         #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 12px 16px; border-radius: 20px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; }
         .ai { background: white; border: 1.5px solid #ffe4e6; align-self: flex-start; border-bottom-left-radius: 2px; }
@@ -35,10 +36,10 @@
     <div id="setup-screen" class="screen">
         <div class="setup-box"><input type="text" id="user-name" placeholder="あなたのお名前" maxlength="10"></div>
         <div class="char-grid" id="grid"></div>
-        <button onclick="startApp()" style="margin-top:20px; padding:15px; background:var(--main); color:white; border:none; border-radius:25px; font-weight:bold; cursor:pointer; font-size:1.1rem; width:100%;">この子と過ごす</button>
+        <button onclick="startApp()" style="margin-top:20px; padding:15px; background:var(--main); color:white; border:none; border-radius:25px; font-weight:bold; cursor:pointer; font-size:1.1rem; width:100%; box-shadow: 0 4px 10px rgba(255,183,183,0.4);">この子と過ごす</button>
     </div>
     <div id="chat-screen">
-        <div id="pet-view"><div id="pet-icon-large"></div></div>
+        <div id="pet-view"><div id="pet-icon-large"></div><div id="pet-name-label" style="font-weight:bold; color:#888; font-size:0.8rem;"></div></div>
         <div id="chat-box"></div>
         <div class="footer">
             <input type="text" id="user-input" placeholder="なでなでして…">
@@ -54,14 +55,18 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    // 余計なスペースとvを削除し、純粋なキーに修正しました
-    const API_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA"; 
+    const RAW_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA"; 
+    const API_KEY = RAW_KEY.trim(); 
 
     const charData = [
         { id:'ポチ', icon:'🐶', prompt:'元気な犬。主さまが大好き。ワン！'},
         { id:'タマ', icon:'🐱', prompt:'ツンデレな猫。ゴロゴロ…'},
-        { id:'モコ', icon:'🐰', prompt:'おっとり。優しく寄り添う。'},
-        { id:'ハム', icon:'🐹', prompt:'一生懸命。短い言葉で励ます。'}
+        { id:'モコ', icon:'🐰', prompt:'おっとりウサギ。優しく寄り添う。'},
+        { id:'ハム', icon:'🐹', prompt:'一生懸命。短い言葉で励ます。'},
+        { id:'レオ', icon:'🦁', prompt:'優しくて強い。包容力がある。'},
+        { id:'ココ', icon:'🦜', prompt:'明るいインコ。元気付ける。'},
+        { id:'ペン', icon:'🐧', prompt:'マイペース。癒やし系。'},
+        { id:'パン', icon:'🐼', prompt:'穏やか。全肯定してくれる。'}
     ];
 
     let selected, userName, chat, model;
@@ -76,7 +81,7 @@
     window.selectChar = (id) => { selected = charData.find(c => c.id === id); render(); };
     window.startApp = async () => {
         userName = document.getElementById('user-name').value.trim() || "主さま";
-        if (!selected) return alert("どの子にしますか？");
+        if (!selected) return alert("どの子と一緒に過ごしますか？");
         try {
             const genAI = new GoogleGenerativeAI(API_KEY);
             model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -86,9 +91,10 @@
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
             document.getElementById('pet-icon-large').innerText = selected.icon;
-            const r = await chat.sendMessage("待ってたよ！クゥ〜ン！");
+            document.getElementById('pet-name-label').innerText = selected.id;
+            const r = await chat.sendMessage("待ってたよ！");
             addMsg(r.response.text(), 'ai');
-        } catch (e) { alert("キーが正しく認識されませんでした。スペースが入っていないか確認してください。"); }
+        } catch (e) { alert("キーが正しくないか、準備中のようです。1分ほど待ってから再試行してください！"); }
     };
     window.handleSend = async () => {
         const input = document.getElementById('user-input');
