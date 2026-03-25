@@ -5,72 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>24h寄り添いAIパートナー</title>
     <style>
-        :root { --main-color: #ffb7b7; --bg-color: #fdf6f0; }
-        body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg-color); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
-        #app-container { width: 95%; max-width: 450px; height: 92vh; background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; position: relative; border: 4px solid var(--main-color); }
-        .header { background: var(--main-color); color: white; padding: 18px; font-weight: bold; text-align: center; font-size: 1.2rem; letter-spacing: 1px; }
+        :root { --main-color: #ffb7b7; --bg-color: #fff9f5; }
+        body { font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--bg-color); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        #app { width: 95%; max-width: 450px; height: 95vh; background: white; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); overflow: hidden; display: flex; flex-direction: column; border: 6px solid white; }
+        .header { background: var(--main-color); color: white; padding: 20px; font-weight: bold; text-align: center; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
+        /* 設定画面 */
         .screen { flex: 1; display: flex; flex-direction: column; padding: 25px; overflow-y: auto; }
-        .setup-item { margin-bottom: 25px; text-align: center; }
-        input[type="text"] { width: 100%; padding: 15px; border: 2px solid #ffdada; border-radius: 20px; outline: none; font-size: 18px; text-align: center; background: #fff9f9; }
-        
-        .gender-toggle { display: flex; gap: 10px; margin-bottom: 20px; }
-        .g-btn { flex: 1; padding: 12px; border-radius: 15px; border: 2px solid #eee; background: #f9f9f9; cursor: pointer; font-weight: bold; }
-        .g-btn.active { background: var(--main-color); color: white; border-color: var(--main-color); box-shadow: 0 4px 10px rgba(255,183,183,0.5); }
+        .setup-item { margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 18px; border: 2px solid #ffe4e6; border-radius: 20px; outline: none; font-size: 18px; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .gender-toggle { display: flex; gap: 10px; margin: 20px 0; }
+        .g-btn { flex: 1; padding: 15px; border-radius: 18px; border: none; background: #f0f0f0; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .g-btn.active { background: var(--main-color); color: white; box-shadow: 0 5px 15px rgba(255,183,183,0.5); }
         
         .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .char-card { border: 2px solid #eee; border-radius: 20px; padding: 12px; text-align: center; cursor: pointer; background: white; transition: 0.3s; position: relative; }
-        .char-card .img-placeholder { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg, #ff9a9e, #fad0c4); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
-        .char-card.selected { border-color: var(--main-color); background: #fff5f5; transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-        .char-card.selected::after { content: '❤'; position: absolute; top: 10px; right: 10px; color: var(--main-color); }
+        .char-card { border: 2.5px solid #eee; border-radius: 25px; padding: 15px; text-align: center; cursor: pointer; background: #fff; transition: 0.3s; }
+        .char-img { width: 85px; height: 85px; border-radius: 50%; background: #eee; margin: 0 auto 10px; object-fit: cover; border: 3px solid white; box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+        .char-card.selected { border-color: var(--main-color); background: #fff5f5; transform: scale(1.05); box-shadow: 0 10px 20px rgba(255,183,183,0.2); }
 
-        #chat-screen { display: none; flex-direction: column; height: 100%; padding: 0; background: #fffafb; }
-        #portrait-area { height: 220px; display: flex; justify-content: center; align-items: center; background: linear-gradient(to bottom, #fff0f3, #ffffff); border-bottom: 2px solid #f0f0f0; }
-        .visual-box { width: 160px; height: 160px; border-radius: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        /* チャット画面 */
+        #chat-screen { display: none; flex-direction: column; height: 100%; background: #fffafb; }
+        #char-view { height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, #fff0f3, #ffffff); border-bottom: 1px solid #eee; position: relative; }
+        #main-portrait { height: 220px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); transition: 0.5s; }
         
         #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .msg { padding: 14px 18px; border-radius: 22px; max-width: 80%; font-size: 1rem; line-height: 1.6; position: relative; }
-        .ai-msg { background: white; align-self: flex-start; border: 1.5px solid #ffe4e6; color: #444; border-bottom-left-radius: 4px; }
-        .user-msg { background: var(--main-color); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 12px rgba(255,183,183,0.3); }
+        .msg { padding: 15px 20px; border-radius: 25px; max-width: 80%; font-size: 1rem; line-height: 1.6; }
+        .ai-msg { background: white; align-self: flex-start; border: 1.5px solid #ffe4e6; border-bottom-left-radius: 5px; }
+        .user-msg { background: var(--main-color); color: white; align-self: flex-end; border-bottom-right-radius: 5px; box-shadow: 0 5px 15px rgba(255,183,183,0.3); }
 
         .footer { padding: 20px; background: white; border-top: 1px solid #eee; display: flex; gap: 12px; }
         #user-input { flex: 1; border: none; background: #f5f5f5; padding: 15px 25px; border-radius: 30px; outline: none; font-size: 16px; }
-        .send-btn { background: var(--main-color); color: white; border: none; padding: 0 25px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .send-btn:hover { opacity: 0.8; }
-        
-        #donation-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.97); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; z-index: 100; }
+        .send-btn { background: var(--main-color); color: white; border: none; padding: 0 30px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+
+        #overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.98); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; z-index: 100; }
+        .ofuse-btn { background: #ff4500; color: white; text-decoration: none; padding: 20px 40px; border-radius: 40px; font-weight: bold; margin-top: 25px; box-shadow: 0 10px 20px rgba(255,69,0,0.3); }
     </style>
 </head>
 <body>
 
-<div id="app-container">
+<div id="app">
     <div class="header" id="app-header">24h Partners</div>
 
     <div id="setup-screen" class="screen">
         <div class="setup-item">
-            <label>あなたのニックネーム</label>
-            <input type="text" id="user-name" placeholder="お名前を教えて？" maxlength="10">
+            <input type="text" id="user-name" placeholder="お名前を教えてください" maxlength="10">
         </div>
         <div class="gender-toggle">
-            <button class="g-btn active" id="btn-f" onclick="window.toggleGender('f')">女性パートナー</button>
-            <button class="g-btn" id="btn-m" onclick="window.toggleGender('m')">男性パートナー</button>
+            <button class="g-btn active" id="btn-f" onclick="toggleGender('f')">女性パートナー</button>
+            <button class="g-btn" id="btn-m" onclick="toggleGender('m')">男性パートナー</button>
         </div>
-        <div class="char-grid" id="char-grid"></div>
-        <button onclick="window.startApp()" style="margin-top:30px; padding:20px; background:var(--main-color); color:white; border:none; border-radius:20px; font-weight:bold; cursor:pointer; font-size:1.2rem;">この人と会話を始める</button>
+        <div class="char-grid" id="grid"></div>
+        <button onclick="startApp()" style="margin-top:30px; padding:20px; background:var(--main-color); color:white; border:none; border-radius:25px; font-weight:bold; cursor:pointer; font-size:1.2rem;">このパートナーと始める</button>
     </div>
 
     <div id="chat-screen" class="screen">
-        <div id="portrait-area"><div class="visual-box" id="visual-emoji">🌸</div></div>
+        <div id="char-view">
+            <img id="main-portrait" src="">
+            <div style="font-weight:bold; color:#666; margin-top:5px;" id="char-name-label"></div>
+        </div>
         <div id="chat-box"></div>
-        <div id="donation-overlay">
-            <h2 style="color:#ff4500;">大切なお話があるの…</h2>
-            <p id="donation-text" style="line-height:1.7; color:#333;"></p>
-            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" style="background:#ff4500; color:white; text-decoration:none; padding:18px 40px; border-radius:40px; font-weight:bold; margin-top:30px; display:inline-block;">OFUSEで支援・募金する</a>
+        <div id="overlay">
+            <h2 id="ov-title" style="color:#ff4500;"></h2>
+            <p id="ov-text" style="line-height:1.8; color:#333; margin-bottom:20px;"></p>
+            <a href="https://ofuse.me/o/YOUR_ID" target="_blank" class="ofuse-btn">OFUSEで応援する</a>
             <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:#999; cursor:pointer; text-decoration:underline;">TOPへ戻る</button>
         </div>
         <div class="footer">
-            <input type="text" id="user-input" placeholder="メッセージを送ってね">
-            <button class="send-btn" onclick="window.handleSend()">送信</button>
+            <input type="text" id="user-input" placeholder="メッセージを入力...">
+            <button class="send-btn" onclick="handleSend()">送信</button>
         </div>
     </div>
 </div>
@@ -82,71 +84,72 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    // 確定APIキー
-    const KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA";
+    const API_KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VA"; // ★埋め込み済み
+    
+    // 画像URLのヒント：後で本物のイラストURLに差し替えてください
+    const I = (id) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`; 
 
     const charData = {
         f: [
-            { id:'f1', name:'ひまり', type:'癒やし', color:'#ffb7b7', emoji:'🌸', prompt:'可愛く甘やかす、癒やし系。語尾は「〜だよ」「〜だね」。', donation:'ユニセフ募金のお願いを可愛く。'},
-            { id:'f2', name:'シズク', type:'お姉様', color:'#a2d2ff', emoji:'❄', prompt:'知的で落ち着いたお姉様。敬語。', donation:'寄付の案内を落ち着いて。'},
-            { id:'f3', name:'あかり', type:'元気', color:'#ffcc00', emoji:'☀️', prompt:'活発な元気娘。太陽のような明るさ。', donation:'熱血に国境なき医師団の支援を。'},
-            { id:'f4', name:'ルナ', type:'ツンデレ', color:'#e0e0e0', emoji:'🌙', prompt:'ツンデレ。最初はぶっきらぼうだが実は一途。', donation:'照れながら募金のお願い。'},
-            { id:'f5', name:'サクラ', type:'母性', color:'#a5d6a7', emoji:'🌿', prompt:'包容力のあるお母さんキャラ。', donation:'優しく世界の子供たちのために。'}
+            { id:'ひまり', type:'甘やかし癒やし系', color:'#ffb7b7', img:I('Himari'), prompt:'可愛く甘やかして。語尾は「〜だよ」「〜だね」。', don:'ユニセフ募金をお願い。'},
+            { id:'シズク', type:'知的なお姉様', color:'#a2d2ff', img:I('Shizuku'), prompt:'落ち着いたお姉様。丁寧な敬語で。', don:'大人の余裕で寄付を案内。'},
+            { id:'あかり', type:'元気なムードメーカー', color:'#ffcc00', img:I('Akari'), prompt:'活発で明るい。元気いっぱい！', don:'熱血に国境なき医師団を支援！'},
+            { id:'ルナ', type:'ツンデレな一途', color:'#e0e0e0', img:I('Luna'), prompt:'ぶっきらぼうだけど実は一途なツンデレ。', don:'照れながら募金のお願い。'},
+            { id:'サクラ', type:'包容力の母性', color:'#a5d6a7', img:I('Sakura'), prompt:'包容力のあるお母さん的性格。', don:'優しく世界の子供たちのために。'}
         ],
         m: [
-            { id:'m1', name:'カイト', type:'熱血', color:'#ff7043', emoji:'🔥', prompt:'熱い兄貴分。一人称は「俺」。', donation:'男らしく寄付を呼びかける。'},
-            { id:'m2', name:'レイ', type:'クール', color:'#82ccdd', emoji:'💎', prompt:'冷静沈着。理性的でスマート。', donation:'論理的に支援の必要性を。'},
-            { id:'m3', name:'ソウタ', type:'ワンコ', color:'#dce775', emoji:'🐾', prompt:'人懐っこい可愛い後輩系。', donation:'健気に募金をお願い。'},
-            { id:'m4', name:'アキラ', type:'面白い', color:'#ba68c8', emoji:'🃏', prompt:'ムードメーカー。冗談が大好き。', donation:'明るく、でも真面目に寄付の話。'},
-            { id:'m5', name:'ハルカ', type:'執事', color:'#90a4ae', emoji:'🍷', prompt:'丁寧で献身的な執事キャラ。', donation:'恭しく社会貢献の案内を。'}
+            { id:'カイト', type:'熱い頼れる兄貴', color:'#ff7043', img:I('Kaito'), prompt:'熱い兄貴分。一人称は俺。', don:'男らしく寄付を呼びかける！'},
+            { id:'レイ', type:'クールな秀才', color:'#82ccdd', img:I('Rei'), prompt:'冷静で知的。スマートな対応。', don:'論理的に支援の必要性を説明。'},
+            { id:'ソウタ', type:'可愛いワンコ後輩', color:'#dce775', img:I('Sota'), prompt:'人懐っこい後輩。可愛い。', don:'健気に募金をお願い。'},
+            { id:'アキラ', type:'お調子者な親友', color:'#ba68c8', img:I('Akira'), prompt:'冗談好きなムードメーカー。', don:'明るく真面目に寄付の話。'},
+            { id:'ハルカ', type:'献身的な執事', color:'#90a4ae', img:I('Haruka'), prompt:'丁寧な執事。あなたに忠実。', don:'恭しく社会貢献をご案内。'}
         ]
     };
 
-    let selectedChar, userName, chat, isDonationPhase = false;
-    let currentGender = 'f';
+    let selected, userName, chat, genAI, model;
+    let gender = 'f';
 
-    window.toggleGender = (g) => { currentGender = g; render(); };
+    window.toggleGender = (g) => { gender = g; render(); };
     window.selectChar = (id) => {
-        selectedChar = [...charData.f, ...charData.m].find(c => c.id === id);
-        document.documentElement.style.setProperty('--main-color', selectedChar.color);
+        selected = [...charData.f, ...charData.m].find(c => c.id === id);
+        document.documentElement.style.setProperty('--main-color', selected.color);
         render();
     };
 
     function render() {
-        const grid = document.getElementById('char-grid');
-        grid.innerHTML = charData[currentGender].map(c => `
-            <div class="char-card ${selectedChar?.id === c.id ? 'selected' : ''}" onclick="window.selectChar('${c.id}')">
-                <div class="img-placeholder" style="background:${c.color}">${c.emoji}</div>
-                <h4>${c.name}</h4>
-                <p>${c.type}</p>
+        const grid = document.getElementById('grid');
+        grid.innerHTML = charData[gender].map(c => `
+            <div class="char-card ${selected?.id === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
+                <img class="char-img" src="${c.img}">
+                <div style="font-weight:bold; font-size:0.9rem;">${c.id}</div>
+                <div style="font-size:0.7rem; color:#888;">${c.type}</div>
             </div>
         `).join('');
     }
 
     window.startApp = async () => {
         userName = document.getElementById('user-name').value.trim() || "あなた";
-        if (!selectedChar) return alert("パートナーを選んでね！");
+        if (!selected) return alert("パートナーを選んでね！");
 
         try {
-            const genAI = new GoogleGenerativeAI(KEY);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            genAI = new GoogleGenerativeAI(API_KEY);
+            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             chat = model.startChat({
-                history: [{ role: "user", parts: [{ text: `君は「${selectedChar.name}」という性格：${selectedChar.prompt}。相手の名前は${userName}。親密に短く返信して。返信の最後に必ず[HAPPY][SAD][ANGRY][NORMAL]のどれか1つを付けて。` }] }],
+                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」として、${selected.prompt}。相手の名前は${userName}。親密に短く、2〜3文で返信して。` }] }],
             });
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('chat-screen').style.display = 'flex';
-            document.getElementById('app-header').innerText = selectedChar.name;
-            document.getElementById('visual-emoji').innerText = selectedChar.emoji;
+            document.getElementById('main-portrait').src = selected.img;
+            document.getElementById('char-name-label').innerText = selected.id;
 
-            handleSend("こんにちは！自己紹介して！");
+            handleSend("こんにちは、これからよろしくね！");
         } catch (e) {
-            alert("ごめんね、今ちょっと繋がりにくいみたい。キーを確認してみてね。");
+            addMsg("（……通信の調子が悪いみたい。APIキーが有効か確認してね）", 'ai');
         }
     };
 
     window.handleSend = async (forced) => {
-        if (isDonationPhase) return;
         const input = document.getElementById('user-input');
         const text = forced || input.value.trim();
         if (!text) return;
@@ -156,31 +159,20 @@
 
         try {
             const result = await chat.sendMessage(text);
-            const res = result.response.text();
-            
-            // 感情で見た目を少し変える（簡易ビジュアル）
-            if(res.includes('[HAPPY]')) document.getElementById('portrait-area').style.background = "#fff0f0";
-            if(res.includes('[SAD]')) document.getElementById('portrait-area').style.background = "#f0f4ff";
-            
-            addMsg(res.replace(/\[.*?\]/g, ""), 'ai');
+            const resText = result.response.text();
+            addMsg(resText, 'ai');
 
-            // 寄付トリガー
-            if (["ありがとう", "おやすみ", "バイバイ", "助かった"].some(k => text.includes(k))) {
-                isDonationPhase = true;
+            if (["おやすみ", "ありがとう", "助かった", "バイバイ"].some(k => text.includes(k))) {
                 setTimeout(async () => {
-                    const model = new GoogleGenerativeAI(KEY).getGenerativeModel({ model: "gemini-1.5-flash" });
-                    const don = await model.generateContent(`${selectedChar.name}として、${selectedChar.donation} 24時間寄り添い放題になるOFUSE(300円)と、ユニセフ/国境なき医師団への募金を真剣に伝えて。`);
-                    const donText = don.response.text();
-                    addMsg(donText, 'ai');
-                    setTimeout(() => {
-                        document.getElementById('donation-text').innerText = donText;
-                        document.getElementById('donation-overlay').style.display = 'flex';
-                    }, 2000);
-                }, 1500);
+                    const don = await model.generateContent(`${selected.id}として、${selected.don} 300円のOFUSEで24時間寄り添い放題になることと、ユニセフ/国境なき医師団への募金を真剣にお願いして。`);
+                    const t = don.response.text();
+                    document.getElementById('ov-title').innerText = `${selected.id}からのお願い`;
+                    document.getElementById('ov-text').innerText = t;
+                    document.getElementById('overlay').style.display = 'flex';
+                }, 2000);
             }
         } catch (e) {
-            addMsg(`（……沈黙している）`, 'ai');
-            console.error("Error details:", e);
+            addMsg("（……うまく声が届かなかったみたい）", 'ai');
         }
     };
 
