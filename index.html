@@ -55,13 +55,13 @@
 <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
-    const RAW_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA"; 
-    const API_KEY = RAW_KEY.trim(); 
+    // いただいたキーから余計な文字を完全に排除しました
+    const API_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA".trim(); 
 
     const charData = [
         { id:'ポチ', icon:'🐶', prompt:'元気な犬。主さまが大好き。ワン！'},
         { id:'タマ', icon:'🐱', prompt:'ツンデレな猫。ゴロゴロ…'},
-        { id:'モコ', icon:'🐰', prompt:'おっとりウサギ。優しく寄り添う。'},
+        { id:'モコ', icon:'🐰', prompt:'おっとり。優しく寄り添う。'},
         { id:'ハム', icon:'🐹', prompt:'一生懸命。短い言葉で励ます。'},
         { id:'レオ', icon:'🦁', prompt:'優しくて強い。包容力がある。'},
         { id:'ココ', icon:'🦜', prompt:'明るいインコ。元気付ける。'},
@@ -81,7 +81,7 @@
     window.selectChar = (id) => { selected = charData.find(c => c.id === id); render(); };
     window.startApp = async () => {
         userName = document.getElementById('user-name').value.trim() || "主さま";
-        if (!selected) return alert("どの子と一緒に過ごしますか？");
+        if (!selected) return alert("どの子にしますか？");
         try {
             const genAI = new GoogleGenerativeAI(API_KEY);
             model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -92,9 +92,14 @@
             document.getElementById('chat-screen').style.display = 'flex';
             document.getElementById('pet-icon-large').innerText = selected.icon;
             document.getElementById('pet-name-label').innerText = selected.id;
-            const r = await chat.sendMessage("待ってたよ！");
+            
+            // 初回の挨拶を送信
+            const r = await chat.sendMessage("主さま！あそぼ！");
             addMsg(r.response.text(), 'ai');
-        } catch (e) { alert("キーが正しくないか、準備中のようです。1分ほど待ってから再試行してください！"); }
+        } catch (e) { 
+            console.error(e);
+            alert("通信に失敗しました。キーがまだGoogle側で有効になっていない可能性があります。あと数分だけ待ってみてください！"); 
+        }
     };
     window.handleSend = async () => {
         const input = document.getElementById('user-input');
@@ -105,7 +110,10 @@
         try {
             const result = await chat.sendMessage(text);
             addMsg(result.response.text(), 'ai');
-        } catch (e) { addMsg("……（なでなでして？）", 'ai'); }
+        } catch (e) { 
+            console.error(e);
+            addMsg("……（甘えるような目で見つめている）", 'ai'); 
+        }
     };
     function addMsg(t, s) {
         const box = document.getElementById('chat-box');
