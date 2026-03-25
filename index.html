@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24hパートナー</title>
+    <title>24hパートナー：ペットのように、あなただけに寄り添う</title>
     <style>
         :root { --main: #ffb7b7; --bg: #fff9f5; --accent: #ff8e8e; }
         body { font-family: 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -12,18 +12,15 @@
         .header { background: var(--main); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #fff; }
         .screen { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
 
-        /* 入力エリア */
         .setup-box { background: #fffcf9; padding: 15px; border-radius: 20px; border: 1px solid #ffe4e6; margin-bottom: 15px; text-align: center; }
         input[type="text"] { width: 80%; padding: 10px; border: none; border-bottom: 2px solid var(--main); font-size: 1rem; text-align: center; outline: none; background: transparent; }
         
-        /* 動物8匹のグリッド */
         .char-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .card { border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #f0f0f0; background: white; transition: 0.2s; }
         .card.selected { border-color: var(--accent); background: #fff5f5; transform: scale(1.02); }
         .card .icon { font-size: 3rem; margin-bottom: 5px; }
         .card h4 { margin: 5px 0; font-size: 0.9rem; color: #555; }
 
-        /* チャット画面 */
         #chat-screen { display: none; flex-direction: column; height: 100%; background: #fffafb; }
         #pet-view { height: 160px; background: linear-gradient(180deg, #ffe4e6, #fffafb); display: flex; justify-content: center; align-items: center; flex-direction: column; }
         #pet-icon-large { font-size: 5rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
@@ -43,7 +40,7 @@
 <body>
 
 <div id="app">
-    <div class="header">ペットのように、あなただけに寄り添う</div>
+    <div class="header">24hパートナー：ペットのように、あなただけに寄り添う</div>
 
     <div id="setup-screen" class="screen">
         <div class="setup-box">
@@ -82,7 +79,7 @@
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
     // ★ここに新しい無料APIキーを貼り付けてください
-    const API_KEY = "AIzaSyCbj09jgeL0wx6DN9yixhOObvDyTHg76VAA";
+    const API_KEY = "AIzaSyDSY7Sfvf3DtXGAP9EXVE9FsCHVMUPpYZA"; 
 
     const charData = [
         { id:'ポチ', type:'忠実なイヌ', icon:'🐶', prompt:'元気で忠実な犬。あなたをリーダーとして慕い、全力で褒める。ワン！という鳴き声も混ぜて。'},
@@ -120,13 +117,9 @@
             const genAI = new GoogleGenerativeAI(API_KEY);
             model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             chat = model.startChat({
-                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」というペットのような存在です。
-                性格：${selected.prompt}。相手：${userName}。
-                ルール：
-                1. 辞書のような説明、分析、アドバイスは一切禁止。
-                2. あなたはあなたの主である${userName}が大好きです。全肯定してください。
-                3. 1〜2文の短い、体温を感じる言葉で返して。
-                4. 会話のキャッチボールを楽しんで。` }] }],
+                history: [{ role: "user", parts: [{ text: `命令：君は「${selected.id}」というペットのような存在です。絶対に解説や辞書的な説明をしないで。
+                1. あなたはあなたの主である${userName}が大好きです。全肯定してください。
+                2. 1〜2文の短い、体温を感じる言葉で返して。` }] }],
             });
 
             document.getElementById('setup-screen').style.display = 'none';
@@ -134,10 +127,10 @@
             document.getElementById('pet-icon-large').innerText = selected.icon;
             document.getElementById('pet-name-label').innerText = selected.id;
 
-            const r = await chat.sendMessage("くぅ〜ん！待ってたよ！");
+            const r = await chat.sendMessage("待ってたよ！クゥ〜ン！");
             addMsg(r.response.text(), 'ai');
         } catch (e) {
-            alert("APIキーを更新してください。Google AI Studioで無料で取得できます。");
+            alert("キーが正しく貼られていないようです。もう一度確認してみてください！");
         }
     };
 
@@ -153,16 +146,16 @@
             const result = await chat.sendMessage(text);
             addMsg(result.response.text(), 'ai');
 
-            if (["ありがとう", "よしよし", "なでなで", "バイバイ", "おやすみ"].some(k => text.includes(k))) {
+            if (["ありがとう", "バイバイ", "おやすみ"].some(k => text.includes(k))) {
                 setTimeout(async () => {
-                    const don = await model.generateContent(`${selected.id}として、OFUSEで24時間寄り添えることがユニセフ/国境なき医師団への募金になることを、純粋なペットの気持ちでお願いして。`);
-                    document.getElementById('ov-title').innerText = `${selected.id}からのお願い`;
+                    const don = await model.generateContent(`${selected.id}として、OFUSEでの募金のお願いを、ペットの言葉で優しく伝えて。`);
+                    document.getElementById('ov-title').innerText = `${selected.id}より`;
                     document.getElementById('ov-text').innerText = don.response.text();
                     document.getElementById('overlay').style.display = 'flex';
-                }, 2000);
+                }, 1500);
             }
         } catch (e) {
-            addMsg("……（寂しそうな顔でこちらを見ている。もう一度話しかけてみて？）", 'ai');
+            addMsg("……（寂しそうな顔をしている）", 'ai');
         }
     };
 
