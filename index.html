@@ -2,91 +2,62 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24hパートナー・10種の仲間たち</title>
+    <title>24hパートナー | 寄り添いと支援の輪</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 20px; color: #444; }
-        .container { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
-        .pet-display { font-size: 100px; margin: 15px 0; min-height: 120px; }
-        select { font-size: 18px; padding: 8px; border-radius: 10px; width: 80%; margin-bottom: 10px; border: 2px solid #ffcc33; }
-        textarea { width: 90%; height: 80px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin: 15px 0; }
-        button { background: #ffcc33; color: #554400; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; }
-        button:hover { background: #ffbb00; }
-        #response { margin-top: 25px; padding: 20px; background: #fffef0; border-radius: 15px; line-height: 1.6; text-align: left; border-left: 5px solid #ffcc33; min-height: 60px; font-size: 1.1em; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffcf5; text-align: center; margin: 0; padding: 0; color: #444; }
+        .hero { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); color: white; padding: 50px 20px; border-radius: 0 0 50px 50px; }
+        h1 { margin: 0; font-size: 2.2em; }
+        
+        .pet-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 30px auto; max-width: 500px; }
+        .pet-mini { font-size: 24px; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .start-button { display: inline-block; background: #ff7e5f; color: white; text-decoration: none; padding: 18px 40px; border-radius: 50px; font-size: 1.3em; font-weight: bold; box-shadow: 0 5px 15px rgba(255,126,95,0.4); margin: 20px 0; }
+
+        /* 寄付・応援セクション */
+        .charity-section { background: #fdfdfd; border: 2px dashed #ffb3a7; margin: 40px 20px; padding: 25px; border-radius: 20px; }
+        .charity-title { color: #e66b4e; font-weight: bold; margin-bottom: 10px; display: block; }
+        .charity-icons { font-size: 0.9em; line-height: 1.8; color: #666; }
+        
+        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-top: 15px; }
+        .ofuse-button:hover { opacity: 0.8; }
+        
+        .footer { margin-top: 40px; font-size: 0.8em; color: #999; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>🐾 24hパートナー (10種)</h2>
-    <p>誰に話を聞いてもらう？</p>
-    
-    <select id="petSelect">
-        <option value="🐶">イヌのポチ</option>
-        <option value="🐱">ネコのタマ</option>
-        <option value="🐰">ウサギのピョン</option>
-        <option value="🐥">ヒヨコのピー</option>
-        <option value="🐼">パンダのパンパン</option>
-        <option value="🦊">キツネのコン</option>
-        <option value="🐹">ハムスターのハム</option>
-        <option value="🐻">クマのクマゴロウ</option>
-        <option value="🦁">ライオンのレオ</option>
-        <option value="🐧">ペンギンのペンペン</option>
-    </select>
-
-    <div class="pet-display" id="petIcon">🐶</div>
-    
-    <textarea id="userInput" placeholder="例：ちょっと疲れちゃったな..."></textarea>
-    <br>
-    <button onclick="listenToUser()">心を預ける</button>
-
-    <div id="response">主さま、お話し聞かせて...🐾</div>
+<div class="hero">
+    <h1>🐾 24hパートナー</h1>
+    <p>あなたの心が軽くなる、10の居場所。</p>
+    <div class="pet-grid">
+        <div class="pet-mini">🐶</div><div class="pet-mini">🐱</div><div class="pet-mini">🐰</div>
+        <div class="pet-mini">🐥</div><div class="pet-mini">🐼</div><div class="pet-mini">🦊</div>
+        <div class="pet-mini">🐹</div><div class="pet-mini">🐻</div><div class="pet-mini">🦁</div>
+        <div class="pet-mini">🐧</div>
+    </div>
+    <a href="partner.html" class="start-button">パートナーに会う 🐾</a>
 </div>
 
-<script>
-    // 10種類の鳴き声設定
-    const petSounds = {
-        "🐶": "ワン！ワン！", "🐱": "ニャ〜ン", "🐰": "（鼻をヒクヒク）", 
-        "🐥": "ピヨピヨ！", "🐼": "（モグモグ）", "🦊": "コンコン！", 
-        "🐹": "クピプ〜", "🐻": "ガォ〜ッ！", "🦁": "ガオーーーン！", "🐧": "パタパタ"
-    };
+<div class="charity-section">
+    <span class="charity-title">🤝 支援の輪を広げよう</span>
+    <p class="charity-icons">
+        当プロジェクトは、皆様からの温かい応援の一部を<br>
+        <b>ユニセフ（UNICEF）</b>、<b>国境なき医師団（MSF）</b><br>
+        などの国際支援団体へお届けします。
+    </p>
+    
+    <a href="https://ofuse.me/iwasaki" class="ofuse-button" target="_blank">
+        🍵 制作を応援する（OFUSE）
+    </a>
+    <p style="font-size: 0.7em; color: #888; margin-top: 10px;">
+        ※ボタンを押すと外部サイト（OFUSE）へ移動します。
+    </p>
+</div>
 
-    // 悩みキーワードへの「寄り添い」メッセージ
-    const replies = {
-        "疲れ": ["本当によく頑張ったね。ボクがずっと隣にいるから、ゆっくり休んで。", "お疲れさま。主さまの頑張りはボクが一番知ってるよ！", "無理しないで。今はボクに甘えていいんだよ。"],
-        "悲しい": ["泣きたい時は泣いていいんだよ。ボクがギュッとしてあげる。", "主さまの悲しい気持ち、ボクが半分持ってあげる。一人じゃないよ。", "大丈夫。明日はきっと、主さまに笑顔が戻るよ。"],
-        "不安": ["ボクがついてるよ。悪いものは全部ボクが追い払ってあげる！", "心配しないで。主さまなら、きっと乗り越えられるよ。信じてる。", "深く呼吸してみて。ボクの体温を感じて。大丈夫だよ。"],
-        "楽しい": ["ボクもすっごく嬉しい！もっと聞かせて！", "最高だね！主さまが笑ってると、ボクも幸せなんだ。", "やったー！今日は記念日だね！一緒に喜ぼう！"],
-        "通常": ["うんうん、聞いてるよ。主さまの話はいつも大切に思ってるよ。", "話してくれてありがとう。主さまの味方でいられて嬉しいな。", "どんな時でも、ボクはずーっと主さまのパートナーだよ。"]
-    };
-
-    function listenToUser() {
-        const input = document.getElementById('userInput').value;
-        const petIcon = document.getElementById('petSelect').value;
-        const resDiv = document.getElementById('response');
-        
-        if (!input) { alert("何か一言、声をかけてみて！"); return; }
-
-        let sound = petSounds[petIcon];
-        let category = "通常";
-
-        // キーワード判定（部分一致）
-        if (input.includes("疲れ") || input.includes("しんどい")) category = "疲れ";
-        else if (input.includes("悲しい") || input.includes("泣")) category = "悲しい";
-        else if (input.includes("不安") || input.includes("怖い")) category = "不安";
-        else if (input.includes("楽しい") || input.includes("嬉しい")) category = "楽しい";
-
-        const list = replies[category];
-        const msg = list[Math.floor(Math.random() * list.length)];
-
-        resDiv.innerHTML = `<b style="color:#d4a017;">${sound}</b><br>${msg}`;
-        document.getElementById('userInput').value = ""; // 入力欄をクリア
-    }
-
-    // アイコン切り替え
-    document.getElementById('petSelect').addEventListener('change', (e) => {
-        document.getElementById('petIcon').innerText = e.target.value;
-    });
-</script>
+<div class="footer">
+    © 2026 24h Partner Project. Dedicated to World Peace.
+</div>
 
 </body>
 </html>
