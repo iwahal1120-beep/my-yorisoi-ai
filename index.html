@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffcf5; text-align: center; margin: 0; padding: 0; color: #444; }
-        .hero { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); color: white; padding: 50px 20px; border-radius: 0 0 50px 50px; }
-        h1 { margin: 0; font-size: 2.2em; }
-        
+        .hero { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); color: white; padding: 50px 20px; border-radius: 0 0 50px 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 2.2em; letter-spacing: 2px; }
         .pet-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 30px auto; max-width: 500px; }
-        .pet-mini { font-size: 24px; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-        .start-button { display: inline-block; background: #ff7e5f; color: white; text-decoration: none; padding: 18px 40px; border-radius: 50px; font-size: 1.3em; font-weight: bold; box-shadow: 0 5px 15px rgba(255,126,95,0.4); margin: 20px 0; }
-
-        /* 寄付・応援セクション */
-        .charity-section { background: #fdfdfd; border: 2px dashed #ffb3a7; margin: 40px 20px; padding: 25px; border-radius: 20px; }
-        .charity-title { color: #e66b4e; font-weight: bold; margin-bottom: 10px; display: block; }
-        .charity-icons { font-size: 0.9em; line-height: 1.8; color: #666; }
+        .pet-mini { font-size: 24px; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 45px; height: 45px; line-height: 45px; }
         
-        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; margin-top: 15px; }
-        .ofuse-button:hover { opacity: 0.8; }
-        
-        .footer { margin-top: 40px; font-size: 0.8em; color: #999; padding-bottom: 20px; }
+        /* ボタンのデザイン */
+        .start-button { 
+            display: inline-block; background: #ff7e5f; color: white; border: none;
+            padding: 18px 50px; border-radius: 50px; font-size: 1.4em; font-weight: bold; 
+            box-shadow: 0 8px 20px rgba(255,126,95,0.4); margin: 20px 0; cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .start-button:active { transform: scale(0.95); background: #f06a4a; }
+
+        .charity-section { background: white; border: 2px dashed #ffb3a7; margin: 40px 20px; padding: 25px; border-radius: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 10px; font-weight: bold; }
+        .footer { margin-top: 40px; font-size: 0.85em; color: #999; padding-bottom: 30px; }
     </style>
 </head>
 <body>
@@ -36,28 +36,19 @@
         <div class="pet-mini">🐹</div><div class="pet-mini">🐻</div><div class="pet-mini">🦁</div>
         <div class="pet-mini">🐧</div>
     </div>
-    <a href="partner.html" class="start-button">パートナーに会う 🐾</a>
+    
+    <button onclick="location.href='./partner.html';" class="start-button">
+        パートナーに会う 🐾
+    </button>
 </div>
 
 <div class="charity-section">
-    <span class="charity-title">🤝 支援の輪を広げよう</span>
-    <p class="charity-icons">
-        当プロジェクトは、皆様からの温かい応援の一部を<br>
-        <b>ユニセフ（UNICEF）</b>、<b>国境なき医師団（MSF）</b><br>
-        などの国際支援団体へお届けします。
-    </p>
-    
-    <a href="https://ofuse.me/iwasaki" class="ofuse-button" target="_blank">
-        🍵 制作を応援する（OFUSE）
-    </a>
-    <p style="font-size: 0.7em; color: #888; margin-top: 10px;">
-        ※ボタンを押すと外部サイト（OFUSE）へ移動します。
-    </p>
+    <span style="color: #e66b4e; font-weight: bold;">🤝 支援の輪を広げよう</span>
+    <p>皆様からの応援の一部を<b>ユニセフ</b>や<b>国境なき医師団</b>へお届けします。</p>
+    <a href="https://ofuse.me/iwasaki" class="ofuse-button" target="_blank">🍵 制作を応援する（OFUSE）</a>
 </div>
 
-<div class="footer">
-    © 2026 24h Partner Project. Dedicated to World Peace.
-</div>
+<div class="footer">© 2026 24h Partner Project.</div>
 
 </body>
 </html>
