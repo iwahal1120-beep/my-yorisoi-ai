@@ -8,33 +8,34 @@
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; margin: 0; padding: 10px; color: #444; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
         .container { background: white; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-width: 500px; width: 100%; margin: auto; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
         
-        /* ヘッダー：切り替えボタンを配置 */
-        .header { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; px: 15px; }
+        /* ヘッダー */
+        .header { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; padding-left: 15px; padding-right: 15px; }
         .header h2 { margin: 0; color: #ff7e5f; font-size: 1.1em; }
-        .change-btn { background: #fff3cd; border: 1px solid #ffcc33; border-radius: 15px; padding: 5px 12px; font-size: 0.8em; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .change-btn { background: #fff3cd; border: 1px solid #ffcc33; border-radius: 15px; padding: 6px 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
-        /* パートナー選択ポップアップ（普段は隠れている） */
-        #petModal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: white; border-radius: 20px; padding: 20px; width: 85%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        /* パートナー選択ポップアップ */
+        #petModal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 20px; padding: 20px; width: 85%; max-width: 350px; }
         .pet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .pet-item { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 10px 0; cursor: pointer; text-align: center; transition: 0.2s; }
-        .pet-item:hover { background: #fff3cd; border-color: #ffb300; }
+        .pet-item { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 10px 0; cursor: pointer; text-align: center; }
         .pet-item .icon { font-size: 30px; display: block; }
         .pet-item .name { font-size: 0.7em; font-weight: bold; color: #777; }
 
         /* チャット履歴エリア */
-        #chat-log { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 20px; }
         
-        /* 吹き出しの設定（色分け＆右上アイコン） */
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; line-height: 1.6; font-size: 0.95em; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        /* 吹き出し（常に「現在の相棒」を表示） */
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; line-height: 1.6; font-size: 0.95em; position: relative; }
         .msg.user { align-self: flex-end; background: #ff7e5f; color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; color: #444; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; margin-top: 10px; }
-        .msg.pet .pet-avatar { position: absolute; top: -12px; right: -12px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .pet-sound { font-weight: bold; color: #d4a017; font-size: 0.85em; display: block; margin-bottom: 4px; }
+        .msg.pet { align-self: flex-start; background: white; color: #444; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-top: 10px; }
+        
+        /* 吹き出しの右上のアイコン：クラス名で制御して一括置換できるようにする */
+        .pet-avatar-frame { position: absolute; top: -12px; right: -12px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .pet-sound-label { font-weight: bold; color: #d4a017; font-size: 0.85em; display: block; margin-bottom: 4px; }
 
         /* 入力エリア */
         .input-area { padding: 12px; background: white; border-top: 1px solid #eee; }
-        textarea { width: 100%; height: 50px; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; resize: none; outline: none; }
+        textarea { width: 100%; height: 55px; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; resize: none; outline: none; }
         button.send-btn { width: 100%; background: #ff7e5f; color: white; border: none; padding: 12px; border-radius: 25px; margin-top: 8px; font-weight: bold; cursor: pointer; }
         .back-link { display: block; text-align: center; padding: 8px; color: #aaa; text-decoration: none; font-size: 0.8em; }
     </style>
@@ -43,34 +44,35 @@
 
 <div class="container">
     <div class="header">
-        <h2>🐾 <span id="headerName">ペチ</span></h2>
+        <h2>🐾 <span id="current-pet-name">ペチ</span></h2>
         <div class="change-btn" onclick="toggleModal()">
-            <span id="headerIcon">🐶</span> パートナー交代
+            <span id="current-pet-icon">🐶</span> 交代する
         </div>
     </div>
 
     <div id="petModal" onclick="toggleModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <p style="text-align:center; font-weight:bold; margin-top:0;">誰とお話しする？</p>
+            <p style="text-align:center; font-weight:bold; margin:0;">誰に相談する？</p>
             <div class="pet-grid" id="petGrid">
-                <div class="pet-item" data-pet="🐶" data-name="ペチ"><span class="icon">🐶</span><span class="name">ペチ</span></div>
-                <div class="pet-item" data-pet="🐱" data-name="タマ"><span class="icon">🐱</span><span class="name">タマ</span></div>
-                <div class="pet-item" data-pet="🐰" data-name="ピョン"><span class="icon">🐰</span><span class="name">ピョン</span></div>
-                <div class="pet-item" data-pet="🐥" data-name="ピー"><span class="icon">🐥</span><span class="name">ピー</span></div>
-                <div class="pet-item" data-pet="🐼" data-name="パンパン"><span class="icon">🐼</span><span class="name">パンパン</span></div>
-                <div class="pet-item" data-pet="🦊" data-name="コン"><span class="icon">🦊</span><span class="name">コン</span></div>
-                <div class="pet-item" data-pet="🐹" data-name="ハム"><span class="icon">🐹</span><span class="name">ハム</span></div>
-                <div class="pet-item" data-pet="🐻" data-name="クマゴロウ"><span class="icon">🐻</span><span class="name">クマゴロウ</span></div>
-                <div class="pet-item" data-pet="🦁" data-name="レオ"><span class="icon">🦁</span><span class="name">レオ</span></div>
-                <div class="pet-item" data-pet="🐧" data-name="ペンペン"><span class="icon">🐧</span><span class="name">ペンペン</span></div>
+                <div class="pet-item" data-pet="🐶" data-name="ペチ"><span>🐶</span><br><span class="name">ペチ</span></div>
+                <div class="pet-item" data-pet="🐱" data-name="タマ"><span>🐱</span><br><span class="name">タマ</span></div>
+                <div class="pet-item" data-pet="🐰" data-name="ピョン"><span>🐰</span><br><span class="name">ピョン</span></div>
+                <div class="pet-item" data-pet="🐥" data-name="ピー"><span>🐥</span><br><span class="name">ピー</span></div>
+                <div class="pet-item" data-pet="🐼" data-name="パンパン"><span>🐼</span><br><span class="name">パンパン</span></div>
+                <div class="pet-item" data-pet="🦊" data-name="コン"><span>🦊</span><br><span class="name">コン</span></div>
+                <div class="pet-item" data-pet="🐹" data-name="ハム"><span>🐹</span><br><span class="name">ハム</span></div>
+                <div class="pet-item" data-pet="🐻" data-name="クマゴロウ"><span>🐻</span><br><span class="name">クマゴロウ</span></div>
+                <div class="pet-item" data-pet="🦁" data-name="レオ"><span>🦁</span><br><span class="name">レオ</span></div>
+                <div class="pet-item" data-pet="🐧" data-name="ペンペン"><span>🐧</span><br><span class="name">ペンペン</span></div>
             </div>
         </div>
     </div>
 
     <div id="chat-log">
         <div class="msg pet">
-            <span class="pet-avatar">🐶</span>
-            ボクの名前はペチだよ。よろしくね！今日はどうしたの？何でも聞くから、あなたの言葉で話してみて。
+            <span class="pet-avatar-frame active-pet-icon">🐶</span>
+            <span class="pet-sound-label active-pet-sound">ワン！</span>
+            ボクの名前は<span class="active-pet-name">ペチ</span>だよ。今日はどうしたの？何でも聞くから、あなたの言葉で話してみて。
         </div>
     </div>
 
@@ -86,31 +88,43 @@
     let selectedName = "ペチ";
 
     const petProfiles = {
-        "🐶": "ワン！", "🐱": "ニャ〜ン", "🐰": "（ヒクヒク）", "🐥": "ピヨ！", 
-        "🐼": "（ムシャ）", "🦊": "コン！", "🐹": "クピ〜", "🐻": "ガォ！", 
-        "🦁": "ガオー！", "🐧": "パタパタ"
+        "🐶": { sound: "ワン！", name: "ペチ" },
+        "🐱": { sound: "ニャ〜ン", name: "タマ" },
+        "🐰": { sound: "（ヒクヒク）", name: "ピョン" },
+        "🐥": { sound: "ピヨ！", name: "ピー" },
+        "🐼": { sound: "（ムシャ）", name: "パンパン" },
+        "🦊": { sound: "コン！", name: "コン" },
+        "🐹": { sound: "クピ〜", name: "ハム" },
+        "🐻": { sound: "ガォ！", name: "クマゴロウ" },
+        "🦁": { sound: "ガオー！", name: "レオ" },
+        "🐧": { sound: "パタパタ", name: "ペンペン" }
     };
 
-    // ポップアップの表示・非表示
     function toggleModal() {
         const modal = document.getElementById('petModal');
         modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    // パートナー切り替え
+    // パートナー交代の重要ロジック
     document.getElementById('petGrid').addEventListener('click', (e) => {
         const item = e.target.closest('.pet-item');
         if (!item) return;
         
         selectedPet = item.dataset.pet;
         selectedName = item.dataset.name;
-        
-        // ヘッダー更新
-        document.getElementById('headerIcon').innerText = selectedPet;
-        document.getElementById('headerName').innerText = selectedName;
-        
-        toggleModal(); // 閉じる
-        addMessage('pet', `これからはボク、${selectedName}が聴くよ。よろしくね。`);
+        const profile = petProfiles[selectedPet];
+
+        // 1. ヘッダーの更新
+        document.getElementById('current-pet-icon').innerText = selectedPet;
+        document.getElementById('current-pet-name').innerText = selectedName;
+
+        // 2. 過去のすべてのアイコン・名前・鳴き声を「今の相棒」に書き換える（全員集合を防ぐ！）
+        document.querySelectorAll('.active-pet-icon').forEach(el => el.innerText = selectedPet);
+        document.querySelectorAll('.active-pet-sound').forEach(el => el.innerText = profile.sound);
+        document.querySelectorAll('.active-pet-name').forEach(el => el.innerText = selectedName);
+
+        toggleModal();
+        addMessage('pet', `これからはボク、${selectedName}がお話し相手だよ。よろしくね。`);
     });
 
     function addMessage(type, text) {
@@ -119,8 +133,11 @@
         msgDiv.className = `msg ${type}`;
         
         if (type === 'pet') {
-            const sound = petProfiles[selectedPet];
-            msgDiv.innerHTML = `<span class="pet-avatar">${selectedPet}</span><span class="pet-sound">${sound}</span>${text}`;
+            const profile = petProfiles[selectedPet];
+            msgDiv.innerHTML = `
+                <span class="pet-avatar-frame active-pet-icon">${selectedPet}</span>
+                <span class="pet-sound-label active-pet-sound">${profile.sound}</span>
+                ${text}`;
         } else {
             msgDiv.innerText = text;
         }
@@ -148,7 +165,7 @@
                 msg = `話してくれてありがとう。そうだったんだね…。もっと詳しく教えてくれるかな？`;
             }
             addMessage('pet', msg);
-        }, 1000);
+        }, 800);
     }
 </script>
 </body>
