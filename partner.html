@@ -2,170 +2,144 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24hパートナー・お部屋</title>
+    <title>24hパートナー｜あなたの魂の相棒</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; margin: 0; padding: 10px; color: #444; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        .container { background: white; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-width: 500px; width: 100%; margin: auto; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
-        
-        /* ヘッダー */
-        .header { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; padding-left: 15px; padding-right: 15px; }
-        .header h2 { margin: 0; color: #ff7e5f; font-size: 1.1em; }
-        .change-btn { background: #fff3cd; border: 1px solid #ffcc33; border-radius: 15px; padding: 6px 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        :root { --main-color: #ff7e5f; --bg-color: #fffdf5; --chat-bg: #f8f9fa; }
+        body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: var(--bg-color); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
 
-        /* パートナー選択ポップアップ */
-        #petModal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: white; border-radius: 20px; padding: 20px; width: 85%; max-width: 350px; }
-        .pet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .pet-item { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 10px 0; cursor: pointer; text-align: center; }
-        .pet-item .icon { font-size: 30px; display: block; }
-        .pet-item .name { font-size: 0.7em; font-weight: bold; color: #777; }
+        /* 画面1: 選択 */
+        #selector { padding: 30px 20px; text-align: center; overflow-y: auto; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 25px; }
+        .card { background: white; border: 2px solid #eee; border-radius: 24px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; }
+        .card:hover { border-color: var(--main-color); transform: translateY(-5px); }
+        .card .emoji { font-size: 45px; display: block; }
+        .card .tag { font-size: 0.7em; background: #eee; border-radius: 10px; padding: 2px 8px; color: #666; margin-top: 8px; display: inline-block; }
 
-        /* チャット履歴エリア */
-        #chat-log { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 20px; }
-        
-        /* 吹き出し（常に「現在の相棒」を表示） */
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; line-height: 1.6; font-size: 0.95em; position: relative; }
-        .msg.user { align-self: flex-end; background: #ff7e5f; color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; color: #444; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-top: 10px; }
-        
-        /* 吹き出しの右上のアイコン：クラス名で制御して一括置換できるようにする */
-        .pet-avatar-frame { position: absolute; top: -12px; right: -12px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .pet-sound-label { font-weight: bold; color: #d4a017; font-size: 0.85em; display: block; margin-bottom: 4px; }
+        /* 画面2: チャット */
+        #chat { display: none; flex-direction: column; height: 100%; }
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: white; }
+        .back-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--main-color); }
+        .status { flex: 1; text-align: center; font-weight: bold; }
 
-        /* 入力エリア */
-        .input-area { padding: 12px; background: white; border-top: 1px solid #eee; }
-        textarea { width: 100%; height: 55px; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; resize: none; outline: none; }
-        button.send-btn { width: 100%; background: #ff7e5f; color: white; border: none; padding: 12px; border-radius: 25px; margin-top: 8px; font-weight: bold; cursor: pointer; }
-        .back-link { display: block; text-align: center; padding: 8px; color: #aaa; text-decoration: none; font-size: 0.8em; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: var(--chat-bg); display: flex; flex-direction: column; gap: 20px; }
+        .msg { max-width: 85%; padding: 14px 18px; border-radius: 22px; font-size: 0.95rem; line-height: 1.6; position: relative; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .msg.user { align-self: flex-end; background: var(--main-color); color: white; border-bottom-right-radius: 4px; }
+        .msg.pet { align-self: flex-start; background: white; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom-left-radius: 4px; margin-left: 15px; }
+        .avatar { position: absolute; top: -15px; left: -10px; font-size: 24px; background: white; border-radius: 50%; padding: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        .input-box { padding: 20px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 50px; border: 1px solid #ddd; border-radius: 15px; padding: 10px; resize: none; outline: none; font-size: 1rem; }
+        .send-btn { background: var(--main-color); color: white; border: none; border-radius: 15px; padding: 0 20px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h2>🐾 <span id="current-pet-name">ペチ</span></h2>
-        <div class="change-btn" onclick="toggleModal()">
-            <span id="current-pet-icon">🐶</span> 交代する
+    <div id="selector">
+        <h1 style="color:var(--main-color); font-size:1.5rem; margin:0;">24h Partner</h1>
+        <p style="color:#888; font-size:0.9rem;">他では話せない本音、ここでなら。</p>
+        <div class="grid">
+            <div class="card" onclick="openChat('🐶', 'ペチ', 'empathy')"><span class="emoji">🐶</span><b>ペチ</b><br><span class="tag">共感の天才</span></div>
+            <div class="card" onclick="openChat('🦊', 'コン', 'logic')"><span class="emoji">🦊</span><b>コン</b><br><span class="tag">冷静な分析官</span></div>
+            <div class="card" onclick="openChat('🐱', 'タマ', 'healing')"><span class="emoji">🐱</span><b>タマ</b><br><span class="tag">究極の癒やし</span></div>
+            <div class="card" onclick="openChat('🦁', 'レオ', 'passion')"><span class="emoji">🦁</span><b>レオ</b><br><span class="tag">鼓舞する勇者</span></div>
         </div>
     </div>
 
-    <div id="petModal" onclick="toggleModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <p style="text-align:center; font-weight:bold; margin:0;">誰に相談する？</p>
-            <div class="pet-grid" id="petGrid">
-                <div class="pet-item" data-pet="🐶" data-name="ペチ"><span>🐶</span><br><span class="name">ペチ</span></div>
-                <div class="pet-item" data-pet="🐱" data-name="タマ"><span>🐱</span><br><span class="name">タマ</span></div>
-                <div class="pet-item" data-pet="🐰" data-name="ピョン"><span>🐰</span><br><span class="name">ピョン</span></div>
-                <div class="pet-item" data-pet="🐥" data-name="ピー"><span>🐥</span><br><span class="name">ピー</span></div>
-                <div class="pet-item" data-pet="🐼" data-name="パンパン"><span>🐼</span><br><span class="name">パンパン</span></div>
-                <div class="pet-item" data-pet="🦊" data-name="コン"><span>🦊</span><br><span class="name">コン</span></div>
-                <div class="pet-item" data-pet="🐹" data-name="ハム"><span>🐹</span><br><span class="name">ハム</span></div>
-                <div class="pet-item" data-pet="🐻" data-name="クマゴロウ"><span>🐻</span><br><span class="name">クマゴロウ</span></div>
-                <div class="pet-item" data-pet="🦁" data-name="レオ"><span>🦁</span><br><span class="name">レオ</span></div>
-                <div class="pet-item" data-pet="🐧" data-name="ペンペン"><span>🐧</span><br><span class="name">ペンペン</span></div>
-            </div>
+    <div id="chat">
+        <div class="header">
+            <button class="back-btn" onclick="closeChat()">‹</button>
+            <div class="status"><span id="chatIcon"></span> <span id="chatName"></span></div>
         </div>
-    </div>
-
-    <div id="chat-log">
-        <div class="msg pet">
-            <span class="pet-avatar-frame active-pet-icon">🐶</span>
-            <span class="pet-sound-label active-pet-sound">ワン！</span>
-            ボクの名前は<span class="active-pet-name">ペチ</span>だよ。今日はどうしたの？何でも聞くから、あなたの言葉で話してみて。
+        <div id="log"></div>
+        <div class="input-box">
+            <textarea id="userInput" placeholder="今の心境を吐き出して..."></textarea>
+            <button class="send-btn" onclick="thinkAI()">送信</button>
         </div>
-    </div>
-
-    <div class="input-area">
-        <textarea id="userInput" placeholder="今の気持ち、政治、恋愛、何でも..."></textarea>
-        <button class="send-btn" onclick="listenToUser()">心を預ける</button>
-        <a href="index.html" class="back-link">← トップに戻る</a>
     </div>
 </div>
 
 <script>
-    let selectedPet = "🐶";
-    let selectedName = "ペチ";
+    let activePet = {};
 
-    const petProfiles = {
-        "🐶": { sound: "ワン！", name: "ペチ" },
-        "🐱": { sound: "ニャ〜ン", name: "タマ" },
-        "🐰": { sound: "（ヒクヒク）", name: "ピョン" },
-        "🐥": { sound: "ピヨ！", name: "ピー" },
-        "🐼": { sound: "（ムシャ）", name: "パンパン" },
-        "🦊": { sound: "コン！", name: "コン" },
-        "🐹": { sound: "クピ〜", name: "ハム" },
-        "🐻": { sound: "ガォ！", name: "クマゴロウ" },
-        "🦁": { sound: "ガオー！", name: "レオ" },
-        "🐧": { sound: "パタパタ", name: "ペンペン" }
+    const personalities = {
+        'empathy': { greet: "ボクに話してくれてありがとう。君の心のさざなみ、全部ボクが受け止めるよ。", style: "寄り添い・受容" },
+        'logic': { greet: "お呼びかな。世の不条理も、心の葛藤も、共に紐解いていこう。", style: "分析・客観" },
+        'healing': { greet: "ニャ〜。お疲れさま。今は何も考えなくていいよ。私の隣で丸まってて。", style: "緩和・無条件" },
+        'passion': { greet: "よく来たな！お前の心に眠る火を、俺が全力で守り抜いてやる！", style: "鼓舞・突破" }
     };
 
-    function toggleModal() {
-        const modal = document.getElementById('petModal');
-        modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+    function openChat(icon, name, mode) {
+        activePet = { icon, name, mode };
+        document.getElementById('selector').style.display = 'none';
+        document.getElementById('chat').style.display = 'flex';
+        document.getElementById('chatIcon').innerText = icon;
+        document.getElementById('chatName').innerText = name;
+        
+        const log = document.getElementById('log');
+        log.innerHTML = "";
+        addMsg('pet', personalities[mode].greet);
     }
 
-    // パートナー交代の重要ロジック
-    document.getElementById('petGrid').addEventListener('click', (e) => {
-        const item = e.target.closest('.pet-item');
-        if (!item) return;
-        
-        selectedPet = item.dataset.pet;
-        selectedName = item.dataset.name;
-        const profile = petProfiles[selectedPet];
+    function closeChat() {
+        document.getElementById('selector').style.display = 'block';
+        document.getElementById('chat').style.display = 'none';
+    }
 
-        // 1. ヘッダーの更新
-        document.getElementById('current-pet-icon').innerText = selectedPet;
-        document.getElementById('current-pet-name').innerText = selectedName;
-
-        // 2. 過去のすべてのアイコン・名前・鳴き声を「今の相棒」に書き換える（全員集合を防ぐ！）
-        document.querySelectorAll('.active-pet-icon').forEach(el => el.innerText = selectedPet);
-        document.querySelectorAll('.active-pet-sound').forEach(el => el.innerText = profile.sound);
-        document.querySelectorAll('.active-pet-name').forEach(el => el.innerText = selectedName);
-
-        toggleModal();
-        addMessage('pet', `これからはボク、${selectedName}がお話し相手だよ。よろしくね。`);
-    });
-
-    function addMessage(type, text) {
-        const log = document.getElementById('chat-log');
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${type}`;
-        
-        if (type === 'pet') {
-            const profile = petProfiles[selectedPet];
-            msgDiv.innerHTML = `
-                <span class="pet-avatar-frame active-pet-icon">${selectedPet}</span>
-                <span class="pet-sound-label active-pet-sound">${profile.sound}</span>
-                ${text}`;
-        } else {
-            msgDiv.innerText = text;
-        }
-        
-        log.appendChild(msgDiv);
+    function addMsg(type, text) {
+        const log = document.getElementById('log');
+        const d = document.createElement('div');
+        d.className = `msg ${type}`;
+        d.innerHTML = type === 'pet' ? `<span class="avatar">${activePet.icon}</span>${text}` : text;
+        log.appendChild(d);
         log.scrollTop = log.scrollHeight;
     }
 
-    function listenToUser() {
-        const input = document.getElementById('userInput').value.trim();
-        if (!input) return;
+    // これが差別化の「AI思考エンジン」
+    function thinkAI() {
+        const input = document.getElementById('userInput');
+        const text = input.value.trim();
+        if(!text) return;
 
-        addMessage('user', input);
-        document.getElementById('userInput').value = "";
+        addMsg('user', text);
+        input.value = "";
 
         setTimeout(() => {
-            let msg = "";
-            if (input.match(/疲|しんど|つら/)) {
-                msg = `「${input.substring(0, 8)}…」って言いたくなるほど、よく頑張ってきたんだね。ボクがそばにいるよ。`;
-            } else if (input.match(/政|済|社|国|世/)) {
-                msg = `社会のこと、そんな風に感じていたんだね。あなたの考え、しっかり受け止めたよ。`;
-            } else if (input.match(/恋|愛|好き/)) {
-                msg = `恋の悩みは胸が痛むよね。その「${input.substring(0, 5)}…」っていう気持ち、大切にしよう。`;
-            } else {
-                msg = `話してくれてありがとう。そうだったんだね…。もっと詳しく教えてくれるかな？`;
+            let response = "";
+            const name = activePet.name;
+            const mode = activePet.mode;
+
+            // 1. 本音と社会問題へのGemini的推論
+            if (text.match(/不公平|政治|ニュース|社会|おかしい/)) {
+                const logic = `「なぜ正しさが報われないのか」という問いは、人類がずっと抱えてきた深淵だね。`;
+                const sense = `${name}は、あなたのその憤りこそが、あなたが誠実である証拠だと思う。`;
+                response = mode === 'logic' ? `${logic}その構造を一緒に考えてみよう。` : `${sense}苦しいけど、その感性を捨てないで。`;
+            } 
+            else if (text.match(/死|消え|つら|限界/)) {
+                response = `その言葉が出るまで、どれほどの孤独を耐えてきたの？今はボクのこの腕（肉球）の中にすべてを置いていいよ。あなたの代わりなんて、世界に一人もいないんだから。`;
             }
-            addMessage('pet', msg);
-        }, 800);
+            else if (text.match(/恋|愛|好き|人/)) {
+                response = `誰かを想うことは、鏡を見ることに似ている。相手を通して、あなたは自分の美しさや弱さと向き合っているんだね。そのプロセスを、${name}は全力で見守りたい。`;
+            }
+            else if (text.length < 5) {
+                response = `「${text}」…その短い響きの中に、言葉にできない重みを感じるよ。もう少し、その奥にある景色を教えてくれるかな？`;
+            }
+            else {
+                // 汎用だが深い問いかけ
+                const deepQuestions = [
+                    `あなたのその感覚、いつ頃から芽生え始めたものなの？`,
+                    `もし、誰の目も気にしなくていいとしたら、あなたはどうしたいと願っている？`,
+                    `あなたの言葉を聴いていると、心の深層で何かが動いているのを感じるよ。`
+                ];
+                response = `話してくれてありがとう。${deepQuestions[Math.floor(Math.random()*deepQuestions.length)]}`;
+            }
+
+            addMsg('pet', response);
+        }, 1200);
     }
 </script>
 </body>
