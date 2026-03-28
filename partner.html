@@ -5,39 +5,44 @@
     <title>24hパートナー・お部屋</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 15px; color: #444; margin: 0; }
-        .container { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 500px; margin: 10px auto; box-sizing: border-box; }
-        h2 { color: #ff7e5f; font-size: 1.5em; margin-bottom: 5px; }
-        .subtitle { font-size: 0.85em; color: #999; margin-bottom: 20px; }
-
-        .pet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
-        .pet-item { background: #fefefe; border: 1.5px solid #eee; border-radius: 12px; padding: 8px 0; cursor: pointer; transition: 0.2s; }
-        .pet-item.selected { background: #fff3cd; border-color: #ffb300; transform: scale(1.05); }
-        .pet-item .icon { font-size: 32px; display: block; }
-        .pet-item .name { font-size: 0.7em; color: #777; font-weight: bold; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; margin: 0; padding: 10px; color: #444; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        .container { background: white; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); max-width: 500px; width: 100%; margin: auto; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
         
-        .current-partner { background: #fffef0; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #ffe082; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .current-icon { font-size: 50px; }
-        .current-info { text-align: left; }
-        .current-name { font-size: 1.1em; font-weight: bold; color: #554400; }
-
-        textarea { width: 100%; height: 100px; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; resize: none; background: #fafafa; }
-        button { background: #ff7e5f; color: white; border: none; padding: 14px 40px; border-radius: 50px; cursor: pointer; font-size: 1.1em; font-weight: bold; box-shadow: 0 4px 12px rgba(255,126,95,0.2); width: 100%; }
+        /* ヘッダー部分 */
+        .header { padding: 15px; border-bottom: 1px solid #eee; text-align: center; background: #fff; }
+        .header h2 { margin: 0; color: #ff7e5f; font-size: 1.2em; }
         
-        #response { margin-top: 20px; padding: 20px; background: #fcfcfc; border-radius: 15px; text-align: left; border-left: 5px solid #ffcc33; min-height: 80px; line-height: 1.7; font-size: 1.05em; }
-        .response-header { font-weight: bold; color: #d4a017; margin-bottom: 8px; font-size: 0.9em; }
-        
-        .back-link { display: inline-block; margin-top: 30px; color: #ff7e5f; text-decoration: none; font-size: 0.9em; font-weight: bold; }
+        /* パートナー選択（コンパクトに） */
+        .pet-grid { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #fafafa; border-bottom: 1px solid #eee; }
+        .pet-item { flex: 0 0 auto; background: white; border: 1px solid #ddd; border-radius: 10px; padding: 5px 10px; cursor: pointer; text-align: center; }
+        .pet-item.selected { border-color: #ffb300; background: #fff3cd; }
+        .pet-item .icon { font-size: 24px; }
+        .pet-item .name { font-size: 0.7em; display: block; font-weight: bold; }
 
-        @media (max-width: 400px) { .pet-grid { grid-template-columns: repeat(4, 1fr); } }
+        /* チャット履歴エリア */
+        #chat-log { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* メッセージの吹き出し */
+        .msg { max-width: 80%; padding: 10px 15px; border-radius: 18px; line-height: 1.5; font-size: 0.95em; position: relative; word-wrap: break-word; }
+        .msg.user { align-self: flex-end; background: #ff7e5f; color: white; border-bottom-right-radius: 2px; }
+        .msg.pet { align-self: flex-start; background: white; color: #444; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 35px; }
+        .pet-avatar { position: absolute; left: -40px; bottom: 0; font-size: 28px; }
+
+        /* 入力エリア */
+        .input-area { padding: 15px; background: white; border-top: 1px solid #eee; }
+        textarea { width: 100%; height: 60px; padding: 10px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; resize: none; outline: none; }
+        button { width: 100%; background: #ff7e5f; color: white; border: none; padding: 12px; border-radius: 25px; margin-top: 10px; font-weight: bold; cursor: pointer; }
+        
+        .back-link { display: block; text-align: center; padding: 10px; color: #aaa; text-decoration: none; font-size: 0.8em; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🐾 24hパートナー</h2>
-    <p class="subtitle">好きなパートナーをタップしてね！</p>
-    
+    <div class="header">
+        <h2>🐾 24hパートナー</h2>
+    </div>
+
     <div class="pet-grid" id="petGrid">
         <div class="pet-item selected" data-pet="🐶" data-name="ペチ"><span class="icon">🐶</span><span class="name">ペチ</span></div>
         <div class="pet-item" data-pet="🐱" data-name="タマ"><span class="icon">🐱</span><span class="name">タマ</span></div>
@@ -51,58 +56,25 @@
         <div class="pet-item" data-pet="🐧" data-name="ペンペン"><span class="icon">🐧</span><span class="name">ペンペン</span></div>
     </div>
 
-    <div class="current-partner">
-        <div class="current-icon" id="currentIcon">🐶</div>
-        <div class="current-info">
-            <div class="current-name" id="currentName">イヌのペチ</div>
-            <div style="font-size: 0.8em; color: #999;" id="currentStatus">よろしくね！今日はどうしたの？</div>
+    <div id="chat-log">
+        <div class="msg pet">
+            <span class="pet-avatar" id="start-avatar">🐶</span>
+            ボクの名前は<span id="start-name">ペチ</span>だよ。今日はどうしたの？何でも聞くから、あなたの言葉で話してみて。
         </div>
     </div>
-    
-    <textarea id="userInput" placeholder="今の気持ち、政治、恋愛、何でも話してね！"></textarea>
-    <button onclick="listenToUser()">心を預ける</button>
 
-    <div id="response">
-        <div class="response-header">🐾</div>
-        ボクの名前はペチだよ、よろしくね！今日はどうしたの？何かあった？
+    <div class="input-area">
+        <textarea id="userInput" placeholder="今の気持ち、政治、恋愛、何でも..."></textarea>
+        <button onclick="listenToUser()">心を預ける</button>
+        <a href="index.html" class="back-link">← トップに戻る</a>
     </div>
-
-    <a href="index.html" class="back-link">← トップに戻る</a>
 </div>
 
 <script>
     let selectedPet = "🐶";
     let selectedName = "ペチ";
 
-    const petProfiles = {
-        "🐶": "ワン！", "🐱": "ニャ〜ン", "🐰": "（ヒクヒク）", "🐥": "ピヨ！", 
-        "🐼": "（ムシャ）", "🦊": "コン！", "🐹": "クピ〜", "🐻": "ガォ！", 
-        "🦁": "ガオー！", "🐧": "パタパタ"
-    };
-
-    const replies = {
-        "政": [
-            "今の世の中、いろいろ大変だよね。ボクもニュースを見てると不安になることがあるよ。あなたの考え、もっと詳しく聞かせてくれる？",
-            "政治や経済の話って、自分一人の力じゃどうにもならない気がして疲れちゃうこともあるよね。でも、あなたがそうやって真剣に考えてること、ボクはすごいと思うよ。",
-            "難しい問題だけど、こうやって誰かに話すだけでも心が整理されることってあるよね。ボクはいつでもあなたの壁打ち相手になるからね。"
-        ],
-        "恋": [
-            "恋の話だね！誰かを想う気持ちって、ドキドキするけど時に苦しいよね。あなたのその想い、ボクがしっかり受け止めるよ。",
-            "人の気持ちは移ろいやすいものだけど、今あなたが感じているその「好き」っていう気持ち、大切にしてほしいな。",
-            "恋愛って難しいよね。でも、何があってもボクはあなたの味方だよ。あなたの幸せを一番に願ってるからね。"
-        ],
-        "疲": [
-            "本当によく頑張ったね。毎日社会の中で戦うのは、誰だって息が切れちゃうよ。今はボクの前で、ゆっくり羽を休めてね。",
-            "お疲れさま！あなたの頑張りはボクがちゃんと知ってるよ。今日はもう、自分をたくさん甘やかしてあげよう。ずっとそばにいるから。",
-            "無理しすぎちゃだめだよ。深呼吸して、ボクと一緒にのんびりしよう。あなたは一人じゃないからね。"
-        ],
-        "通": [
-            "うん、聞いてるよ。話してくれてありがとう。言葉にすることで、少しだけ心が軽くなったかな？いつでもここにおいでね。",
-            "どんな時でもボクはあなたの味方だよ。またいつでも、あなたのペースでお話ししてね。待ってるよ！",
-            "あなたの言葉、ちゃんと届いたよ。ボクに話してくれて嬉しいな。今日はゆっくり休んでね。"
-        ]
-    };
-
+    // パートナー切り替え
     document.getElementById('petGrid').addEventListener('click', (e) => {
         const item = e.target.closest('.pet-item');
         if (!item) return;
@@ -110,28 +82,47 @@
         item.classList.add('selected');
         selectedPet = item.dataset.pet;
         selectedName = item.dataset.name;
-        document.getElementById('currentIcon').innerText = selectedPet;
-        document.getElementById('currentName').innerText = `${selectedPet === '🐶' ? 'イヌ' : selectedPet === '🐱' ? 'ネコ' : 'パートナー'}の${selectedName}`;
-        document.getElementById('response').innerHTML = `<div class="response-header">🐾</div>ボクの名前は${selectedName}だよ、よろしくね！今日はどうしたの？`;
+        
+        // 最初の挨拶メッセージをリセット（任意）
+        addMessage('pet', `ボクは${selectedName}。話し相手を変えたくなったらいつでも言ってね。準備はできてるよ。`);
     });
+
+    function addMessage(type, text) {
+        const log = document.getElementById('chat-log');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${type}`;
+        
+        if (type === 'pet') {
+            msgDiv.innerHTML = `<span class="pet-avatar">${selectedPet}</span>${text}`;
+        } else {
+            msgDiv.innerText = text;
+        }
+        
+        log.appendChild(msgDiv);
+        log.scrollTop = log.scrollHeight; // 自動スクロール
+    }
 
     function listenToUser() {
         const input = document.getElementById('userInput').value.trim();
-        const resDiv = document.getElementById('response');
-        if (!input) { alert("何か書いてみてね！"); return; }
+        if (!input) return;
 
-        resDiv.innerHTML = `<span style="color:#aaa;">（…あなたの言葉を、じっくり受け止めてるよ…）</span>`;
+        addMessage('user', input);
+        document.getElementById('userInput').value = "";
 
+        // 考える「溜め」を演出
         setTimeout(() => {
-            let cat = "通";
-            if (input.match(/政|済|社|世|国|選挙|税|戦争|平和/)) cat = "政";
-            else if (input.match(/恋|愛|好き|彼|彼女|結婚|不倫|浮気|出会/)) cat = "恋";
-            else if (input.match(/疲|しんど|つら|苦|悲|泣|だめ|ダメ/)) cat = "疲";
-
-            const msg = replies[cat][Math.floor(Math.random() * replies[cat].length)];
-            resDiv.innerHTML = `<div class="response-header">${selectedPet} ${petProfiles[selectedPet]}</div>${msg}`;
-            document.getElementById('userInput').value = "";
-        }, 800);
+            let msg = "";
+            if (input.match(/疲|しんど|つら/)) {
+                msg = `「${input.substring(0, 8)}…」って言いたくなるほど、よく頑張ってきたね。あなたのその疲れ、ボクが半分引き受けるよ。今はゆっくりしよう。`;
+            } else if (input.match(/政|済|社|国|世/)) {
+                msg = `今の世の中にそんな風に感じていたんだね。あなたの考え、すごく深く刺さったよ。社会は広いけど、今ここにはボクがついているからね。`;
+            } else if (input.match(/恋|愛|好き/)) {
+                msg = `恋の悩みかぁ…。胸が締め付けられるよね。その「${input.substring(0, 5)}…」っていう気持ちを大切にしているあなたを、ボクはずっと応援するよ。`;
+            } else {
+                msg = `話してくれてありがとう。そうだったんだね…。あなたの言葉を聴いて、ボクも心が動いたよ。もっと詳しく教えてくれる？`;
+            }
+            addMessage('pet', msg);
+        }, 1000);
     }
 </script>
 </body>
