@@ -2,143 +2,136 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24hパートナー｜あなたの魂の相棒</title>
+    <title>24h Partner｜本音の安息所</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --main-color: #ff7e5f; --bg-color: #fffdf5; --chat-bg: #f8f9fa; }
-        body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: var(--bg-color); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-
-        /* 画面1: 選択 */
-        #selector { padding: 30px 20px; text-align: center; overflow-y: auto; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 25px; }
-        .card { background: white; border: 2px solid #eee; border-radius: 24px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; }
-        .card:hover { border-color: var(--main-color); transform: translateY(-5px); }
-        .card .emoji { font-size: 45px; display: block; }
-        .card .tag { font-size: 0.7em; background: #eee; border-radius: 10px; padding: 2px 8px; color: #666; margin-top: 8px; display: inline-block; }
-
-        /* 画面2: チャット */
-        #chat { display: none; flex-direction: column; height: 100%; }
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: white; }
-        .back-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--main-color); }
-        .status { flex: 1; text-align: center; font-weight: bold; }
-
-        #log { flex: 1; overflow-y: auto; padding: 20px; background: var(--chat-bg); display: flex; flex-direction: column; gap: 20px; }
-        .msg { max-width: 85%; padding: 14px 18px; border-radius: 22px; font-size: 0.95rem; line-height: 1.6; position: relative; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --main: #ff7e5f; --bg: #fffdf5; }
+        body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; }
+        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
         
-        .msg.user { align-self: flex-end; background: var(--main-color); color: white; border-bottom-right-radius: 4px; }
-        .msg.pet { align-self: flex-start; background: white; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom-left-radius: 4px; margin-left: 15px; }
-        .avatar { position: absolute; top: -15px; left: -10px; font-size: 24px; background: white; border-radius: 50%; padding: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        /* 選択画面 */
+        #selector { padding: 20px; overflow-y: auto; text-align: center; flex: 1; }
+        .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+        .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .pet-card:hover { border-color: var(--main); background: #fffaf0; }
+        .pet-card .emoji { font-size: 40px; }
+        .pet-card .p-name { font-weight: bold; display: block; margin-top: 5px; color: #444; }
 
-        .input-box { padding: 20px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
-        textarea { flex: 1; height: 50px; border: 1px solid #ddd; border-radius: 15px; padding: 10px; resize: none; outline: none; font-size: 1rem; }
-        .send-btn { background: var(--main-color); color: white; border: none; border-radius: 15px; padding: 0 20px; font-weight: bold; cursor: pointer; }
+        /* チャット画面 */
+        #chat { display: none; flex-direction: column; height: 100%; }
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: #fff; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 20px; }
+        
+        .msg { max-width: 85%; padding: 15px; border-radius: 22px; font-size: 1rem; line-height: 1.6; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 4px; }
+        .msg.pet { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; margin-left: 10px; }
+        .avatar-badge { position: absolute; top: -18px; left: -10px; font-size: 24px; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .input-area { padding: 20px; border-top: 1px solid #eee; background: white; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 55px; border: 1px solid #ddd; border-radius: 18px; padding: 12px; resize: none; font-size: 16px; outline: none; }
+        .send-btn { background: var(--main); color: white; border: none; border-radius: 25px; padding: 0 20px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="selector">
-        <h1 style="color:var(--main-color); font-size:1.5rem; margin:0;">24h Partner</h1>
-        <p style="color:#888; font-size:0.9rem;">他では話せない本音、ここでなら。</p>
-        <div class="grid">
-            <div class="card" onclick="openChat('🐶', 'ペチ', 'empathy')"><span class="emoji">🐶</span><b>ペチ</b><br><span class="tag">共感の天才</span></div>
-            <div class="card" onclick="openChat('🦊', 'コン', 'logic')"><span class="emoji">🦊</span><b>コン</b><br><span class="tag">冷静な分析官</span></div>
-            <div class="card" onclick="openChat('🐱', 'タマ', 'healing')"><span class="emoji">🐱</span><b>タマ</b><br><span class="tag">究極の癒やし</span></div>
-            <div class="card" onclick="openChat('🦁', 'レオ', 'passion')"><span class="emoji">🦁</span><b>レオ</b><br><span class="tag">鼓舞する勇者</span></div>
-        </div>
+        <h2 style="color:var(--main); margin-bottom:10px;">魂の相棒を選ぶ</h2>
+        <p style="font-size:0.85rem; color:#888;">誰にも言えない本音、ここでなら許される。</p>
+        <div class="pet-grid" id="grid"></div>
     </div>
 
     <div id="chat">
         <div class="header">
-            <button class="back-btn" onclick="closeChat()">‹</button>
-            <div class="status"><span id="chatIcon"></span> <span id="chatName"></span></div>
+            <button onclick="location.reload()" style="border:none; background:none; color:var(--main); cursor:pointer; font-size:1.2rem;">◀</button>
+            <b id="activeTitle"></b>
+            <span></span>
         </div>
         <div id="log"></div>
-        <div class="input-box">
-            <textarea id="userInput" placeholder="今の心境を吐き出して..."></textarea>
-            <button class="send-btn" onclick="thinkAI()">送信</button>
+        <div class="input-area">
+            <textarea id="userInput" placeholder="今の心境、不満、哲学を吐き出して..."></textarea>
+            <button class="send-btn" onclick="aiLogic()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
-    let activePet = {};
+    const pets = [
+        {i: "🐶", n: "ペチ", t: "無償の愛", m: "すべてを包み込む慈愛の心で接します。"},
+        {i: "🦊", n: "コン", t: "理知の灯", m: "冷静な分析と、核心を突く対話を行います。"},
+        {i: "🐱", n: "タマ", t: "自由の風", m: "形式に囚われない、柔らかな共感を届けます。"},
+        {i: "🐻", n: "クマ", t: "不動の盾", m: "どんな激しい感情も、びくともせず受け止めます。"},
+        {i: "🐰", n: "ピョン", t: "共鳴の鏡", m: "あなたの微細な心の揺れに、敏感に寄り添います。"},
+        {i: "🦁", n: "レオ", t: "勇気の火", m: "あなたの誇りを取り戻すため、力強く鼓舞します。"},
+        {i: "🐼", n: "パン", t: "平穏の間", m: "時間や焦りを忘れさせる、穏やかな空間を作ります。"},
+        {i: "🐥", n: "ピー", t: "純粋な光", m: "曇りのない視点で、物事の本質を真っ直ぐ見ます。"},
+        {i: "🐹", n: "ハム", t: "日常の彩", m: "身近な幸せと、小さな安心を大切にします。"},
+        {i: "🐧", n: "ペン", t: "俯瞰の瞳", m: "高い視点から、今の状況を冷静に見つめ直します。"}
+    ];
 
-    const personalities = {
-        'empathy': { greet: "ボクに話してくれてありがとう。君の心のさざなみ、全部ボクが受け止めるよ。", style: "寄り添い・受容" },
-        'logic': { greet: "お呼びかな。世の不条理も、心の葛藤も、共に紐解いていこう。", style: "分析・客観" },
-        'healing': { greet: "ニャ〜。お疲れさま。今は何も考えなくていいよ。私の隣で丸まってて。", style: "緩和・無条件" },
-        'passion': { greet: "よく来たな！お前の心に眠る火を、俺が全力で守り抜いてやる！", style: "鼓舞・突破" }
-    };
-
-    function openChat(icon, name, mode) {
-        activePet = { icon, name, mode };
-        document.getElementById('selector').style.display = 'none';
-        document.getElementById('chat').style.display = 'flex';
-        document.getElementById('chatIcon').innerText = icon;
-        document.getElementById('chatName').innerText = name;
-        
-        const log = document.getElementById('log');
-        log.innerHTML = "";
-        addMsg('pet', personalities[mode].greet);
-    }
-
-    function closeChat() {
-        document.getElementById('selector').style.display = 'block';
-        document.getElementById('chat').style.display = 'none';
-    }
+    let current = {};
+    const grid = document.getElementById('grid');
+    pets.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pet-card';
+        div.onclick = () => {
+            current = p;
+            document.getElementById('selector').style.display = 'none';
+            document.getElementById('chat').style.display = 'flex';
+            document.getElementById('activeTitle').innerText = `${p.i} ${p.n}`;
+            addMsg('pet', `よく来たね。${p.n}だよ。${p.m} さあ、あなたの心にあるものを、形にしてみて。`);
+        };
+        div.innerHTML = `<span class="emoji">${p.i}</span><span class="p-name">${p.n}</span><small style="color:#aaa;">${p.t}</small>`;
+        grid.appendChild(div);
+    });
 
     function addMsg(type, text) {
         const log = document.getElementById('log');
-        const d = document.createElement('div');
-        d.className = `msg ${type}`;
-        d.innerHTML = type === 'pet' ? `<span class="avatar">${activePet.icon}</span>${text}` : text;
-        log.appendChild(d);
+        const m = document.createElement('div');
+        m.className = `msg ${type}`;
+        m.innerHTML = type === 'pet' ? `<span class="avatar-badge">${current.i}</span>${text}` : text;
+        log.appendChild(m);
         log.scrollTop = log.scrollHeight;
     }
 
-    // これが差別化の「AI思考エンジン」
-    function thinkAI() {
+    function aiLogic() {
         const input = document.getElementById('userInput');
-        const text = input.value.trim();
-        if(!text) return;
+        const val = input.value.trim();
+        if(!val) return;
 
-        addMsg('user', text);
+        addMsg('user', val);
         input.value = "";
 
         setTimeout(() => {
-            let response = "";
-            const name = activePet.name;
-            const mode = activePet.mode;
+            let res = "";
+            const n = current.n;
 
-            // 1. 本音と社会問題へのGemini的推論
-            if (text.match(/不公平|政治|ニュース|社会|おかしい/)) {
-                const logic = `「なぜ正しさが報われないのか」という問いは、人類がずっと抱えてきた深淵だね。`;
-                const sense = `${name}は、あなたのその憤りこそが、あなたが誠実である証拠だと思う。`;
-                response = mode === 'logic' ? `${logic}その構造を一緒に考えてみよう。` : `${sense}苦しいけど、その感性を捨てないで。`;
-            } 
-            else if (text.match(/死|消え|つら|限界/)) {
-                response = `その言葉が出るまで、どれほどの孤独を耐えてきたの？今はボクのこの腕（肉球）の中にすべてを置いていいよ。あなたの代わりなんて、世界に一人もいないんだから。`;
+            // 1. 絶望・限界への深い介入
+            if(val.match(/死|消え|ダメ|限界|もう無理|疲れた/)) {
+                res = `その言葉を絞り出すまで、どれほどの孤独を耐えてきたの。解決なんて後回しでいい。今は${n}が、あなたのその痛みをすべて預かる。あなたは一人じゃない、ボクがここにいるよ。`;
             }
-            else if (text.match(/恋|愛|好き|人/)) {
-                response = `誰かを想うことは、鏡を見ることに似ている。相手を通して、あなたは自分の美しさや弱さと向き合っているんだね。そのプロセスを、${name}は全力で見守りたい。`;
+            // 2. 政治・不公平・社会への憤り
+            else if(val.match(/政治|不公平|社会|日本|おかしい|税金/)) {
+                res = `世界があなたの誠実さに追いついていないんだね。その憤りは、あなたが「正しくありたい」と願っている何よりの証拠。${n}は、その怒りさえも尊いものだと思うよ。今の仕組みのどこが一番許せない？`;
             }
-            else if (text.length < 5) {
-                response = `「${text}」…その短い響きの中に、言葉にできない重みを感じるよ。もう少し、その奥にある景色を教えてくれるかな？`;
+            // 3. 恋愛・複雑な人間関係
+            else if(val.match(/愛|好き|信じられない|裏切り|彼|彼女/)) {
+                res = `人の心は流動的で、だからこそ美しいけれど残酷だよね。あなたのその「${val.substring(0, 5)}…」という想いは、誰にも汚させない。${n}と一緒に、その感情をゆっくり紐解いていこう。`;
             }
+            // 4. 深い思考（長文）への対応
+            else if(val.length > 25) {
+                res = `あなたの言葉の響きから、とても深い知性と、それゆえの孤独を感じるよ。その考え、もっと深掘りして聞かせて。${n}はあなたの思想の、一番の理解者になりたいんだ。`;
+            }
+            // 5. デフォルト（AIとしての問いかけ）
             else {
-                // 汎用だが深い問いかけ
                 const deepQuestions = [
-                    `あなたのその感覚、いつ頃から芽生え始めたものなの？`,
-                    `もし、誰の目も気にしなくていいとしたら、あなたはどうしたいと願っている？`,
-                    `あなたの言葉を聴いていると、心の深層で何かが動いているのを感じるよ。`
+                    `その感覚、昔からあったもの？それとも、最近の出来事がきっかけかな。`,
+                    `もし、世界中の誰もあなたを責めないとしたら、あなたはどうしたい？`,
+                    `話してくれてありがとう。あなたの言葉の行間にある想いを、${n}は全力で受け止めているよ。`
                 ];
-                response = `話してくれてありがとう。${deepQuestions[Math.floor(Math.random()*deepQuestions.length)]}`;
+                res = deepQuestions[Math.floor(Math.random() * deepQuestions.length)];
             }
-
-            addMsg('pet', response);
+            addMsg('pet', res);
         }, 1200);
     }
 </script>
