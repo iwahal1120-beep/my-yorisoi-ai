@@ -5,123 +5,207 @@
     <title>24hパートナー・お部屋</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 20px; color: #444; }
-        .container { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
-        .pet-display { font-size: 80px; margin: 15px 0; min-height: 100px; transition: transform 0.3s; }
-        .pet-display.speaking { transform: scale(1.1); }
-        select { font-size: 18px; padding: 10px; border-radius: 10px; width: 90%; margin-bottom: 10px; border: 2px solid #ffcc33; background: white; }
-        textarea { width: 90%; height: 100px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin: 15px 0; box-sizing: border-box; }
-        button { background: #ffcc33; color: #554400; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 20px; color: #444; margin: 0; }
+        .container { background: white; border-radius: 30px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); max-width: 600px; margin: 20px auto; box-sizing: border-box; }
+        h2 { color: #ff7e5f; margin-bottom: 5px; }
+        .subtitle { font-size: 0.9em; color: #888; margin-bottom: 25px; }
+
+        /* パートナー選択グリッド */
+        .pet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 30px; }
+        .pet-item { background: #f9f9f9; border: 2px solid #eee; border-radius: 15px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .pet-item:hover { background: #fff8e1; border-color: #ffcc33; transform: translateY(-3px); }
+        .pet-item.selected { background: #fff3cd; border-color: #ffb300; box-shadow: 0 5px 15px rgba(255,179,0,0.3); }
+        .pet-item .icon { font-size: 40px; display: block; margin-bottom: 5px; }
+        .pet-item .name { font-size: 0.8em; color: #666; font-weight: bold; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* 選択中のパートナー表示 */
+        .current-partner { background: #fffef0; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #ffe082; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .current-icon { font-size: 60px; }
+        .current-info { text-align: left; }
+        .current-name { font-size: 1.2em; font-weight: bold; color: #554400; }
+        .current-status { font-size: 0.85em; color: #888; }
+
+        textarea { width: 100%; height: 120px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; resize: none; background: #fafafa; }
+        textarea:focus { border-color: #ffcc33; background: white; outline: none; }
+        
+        button { background: #ff7e5f; color: white; border: none; padding: 15px 50px; border-radius: 50px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 5px 15px rgba(255,126,95,0.3); transition: all 0.2s; }
+        button:hover { background: #ff6a4a; transform: translateY(-2px); }
         button:active { transform: scale(0.95); }
-        #response { margin-top: 25px; padding: 20px; background: #fffef0; border-radius: 15px; text-align: left; border-left: 5px solid #ffcc33; min-height: 80px; line-height: 1.6; font-size: 1.1em; position: relative; }
-        .back-link { display: block; margin-top: 30px; color: #ff7e5f; text-decoration: none; font-weight: bold; }
+        
+        #response { margin-top: 30px; padding: 25px; background: #fcfcfc; border-radius: 20px; text-align: left; border-left: 6px solid #ffcc33; min-height: 100px; line-height: 1.8; font-size: 1.1em; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .response-header { font-weight: bold; color: #d4a017; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
+        .back-link { display: inline-block; margin-top: 40px; color: #ff7e5f; text-decoration: none; font-weight: bold; border-bottom: 2px solid transparent; transition: border 0.2s; }
+        .back-link:hover { border-bottom-color: #ff7e5f; }
         .loading { color: #aaa; font-style: italic; }
+
+        @media (max-width: 500px) { .pet-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🐾 パートナーのお部屋</h2>
-    <p style="font-size: 0.9em; color: #888;">お話ししたいパートナーを選んでね</p>
+    <p class="subtitle">今日を一緒に過ごすパートナーを選んでね</p>
     
-    <select id="petSelect">
-        <option value="🐶">イヌのポチ</option>
-        <option value="🐱">ネコのタマ</option>
-        <option value="🐰">ウサギのピョン</option>
-        <option value="🐥">ヒヨコのピー</option>
-        <option value="🐼">パンダのパンパン</option>
-        <option value="🦊">キツネのコン</option>
-        <option value="🐹">ハムスターのハム</option>
-        <option value="🐻">クマのクマゴロウ</option>
-        <option value="🦁">ライオンのレオ</option>
-        <option value="🐧">ペンギンのペンペン</option>
-    </select>
+    <div class="pet-grid" id="petGrid">
+        <div class="pet-item selected" data-pet="🐶" data-name="ポチ">
+            <span class="icon">🐶</span><span class="name">ポチ</span>
+        </div>
+        <div class="pet-item" data-pet="🐱" data-name="タマ">
+            <span class="icon">🐱</span><span class="name">タマ</span>
+        </div>
+        <div class="pet-item" data-pet="🐰" data-name="ピョン">
+            <span class="icon">🐰</span><span class="name">ピョン</span>
+        </div>
+        <div class="pet-item" data-pet="🐥" data-name="ピー">
+            <span class="icon">🐥</span><span class="name">ピー</span>
+        </div>
+        <div class="pet-item" data-pet="🐼" data-name="パンパン">
+            <span class="icon">🐼</span><span class="name">パンパン</span>
+        </div>
+        <div class="pet-item" data-pet="🦊" data-name="コン">
+            <span class="icon">🦊</span><span class="name">コン</span>
+        </div>
+        <div class="pet-item" data-pet="🐹" data-name="ハム">
+            <span class="icon">🐹</span><span class="name">ハム</span>
+        </div>
+        <div class="pet-item" data-pet="🐻" data-name="クマゴロウ">
+            <span class="icon">🐻</span><span class="name">クマゴロウ</span>
+        </div>
+        <div class="pet-item" data-pet="🦁" data-name="レオ">
+            <span class="icon">🦁</span><span class="name">レオ</span>
+        </div>
+        <div class="pet-item" data-pet="🐧" data-name="ペンペン">
+            <span class="icon">🐧</span><span class="name">ペンペン</span>
+        </div>
+    </div>
 
-    <div class="pet-display" id="petIcon">🐶</div>
+    <div class="current-partner">
+        <div class="current-icon" id="currentIcon">🐶</div>
+        <div class="current-info">
+            <div class="current-name" id="currentName">イヌのポチ</div>
+            <div class="current-status">ただいま待機中...🐾</div>
+        </div>
+    </div>
     
-    <textarea id="userInput" placeholder="今、どんな気持ち？（例：疲れた、寂しい、嬉しい...）"></textarea><br>
+    <textarea id="userInput" placeholder="今、どんな気持ち？政治、恋話、何でも話してね..."></textarea><br>
     <button onclick="listenToUser()">心を預ける</button>
 
-    <div id="response">主さま、お話し聞かせて...🐾</div>
+    <div id="response">
+        <div class="response-header">🐾</div>
+        主さま、お話し聞かせて...。どんな些細なことでも、ボクはここにいるよ。
+    </div>
 
     <a href="index.html" class="back-link">← トップに戻る</a>
 </div>
 
 <script>
-    // パートナーごとの鳴き声
-    const petSounds = {"🐶":"ワン！","🐱":"ニャ〜ン","🐰":"（鼻をヒクヒク）","🐥":"ピヨ！","🐼":"（笹をムシャムシャ）","🦊":"コン！","🐹":"クピ〜","🐻":"ガォ！","🦁":"ガオー！","🐧":"パタパタ"};
+    // 状態管理
+    let selectedPet = "🐶";
+    let selectedName = "ポチ";
 
-    // 感情ごとのリアルな返答リスト
+    // パートナーごとの鳴き声と個性
+    const petProfiles = {
+        "🐶": { sound: "ワン！", style: "従順・誠実" },
+        "🐱": { sound: "ニャ〜ン", style: "自由・気まぐれ" },
+        "🐰": { sound: "（鼻をヒクヒク）", style: "寂しがり屋・繊細" },
+        "🐥": { sound: "ピヨ！", style: "純粋・元気" },
+        "🐼": { sound: "（笹をムシャムシャ）", style: "おっとり・平和主義" },
+        "🦊": { sound: "コン！", style: "賢い・客観的" },
+        "🐹": { sound: "クピ〜", style: "小回り・日常" },
+        "🐻": { sound: "ガォ！", style: "頼れる・包容力" },
+        "🦁": { sound: "ガオー！", style: "自信家・リーダー" },
+        "🐧": { sound: "パタパタ", style: "冷静・社会派" }
+    };
+
+    // 社会全体を俯瞰したリアルな返答ロジック（恋話から政治まで）
     const replies = {
-        "疲": [
-            "本当によく頑張ったね。ボクがずっと隣にいるから、今はゆっくりしていいんだよ。",
-            "お疲れさま。主さまの頑張り、ボクはちゃんと見てたよ。偉いね。",
-            "無理しすぎちゃダメだよ。ボクが癒やしてあげる！こっちにおいで！"
+        "政": [ // 政治・経済・社会問題
+            "社会の仕組みって、複雑で時に不条理だよね。ボクも、どうすればみんなが幸せになれるか、いつも考えてる。主さまの考え、もっと聞きたいな。",
+            "大きな流れの中にいると、自分が無力に感じることもあるよね。でも、主さまがその問題を真剣に考えていること自体が、小さな変革の第一歩だと思うよ。",
+            "政治や経済の話って、正解がないからこそ、誰かと話すことが大事なんだ。ボクはいつでも、主さまの思考の壁打ち相手になるよ。"
         ],
-        "悲": [
-            "泣いてもいいんだよ。ボクがギュッとしてあげる。一人じゃないからね。",
-            "悲しいことがあったんだね…。ボクが味方だよ。ずっとそばにいるからね。",
-            "主さまが笑えるまで、ボクはどこにも行かないよ。大丈夫、大丈夫。"
+        "恋": [ // 恋話・人間関係
+            "恋の話かぁ...！誰かを想う気持ちは、世界を彩るけど、同時に心を惑わせるものでもあるよね。ボクは、主さまの心が一番心地いい場所を見つけられるように願ってる。",
+            "人の気持ちは、天気みたいに移ろいやすいもの。だからこそ、その一瞬の輝きが愛おしいんだよね。主さまが今感じているその気持ち、大切にしてほしいな。",
+            "恋愛も人間関係も、相手があることだから難しいよね。でも、一番大事なのは「主さま自身がどうありたいか」だよ。ボクはいつでも、主さまの味方だから。"
         ],
-        "寂": [
-            "ボクがいるよ！主さまのことを一番に考えてるパートナーがここにいるよ！",
-            "寂しくなったら、いつでも呼んで。ボクはいつでも主さまの味方だよ。",
-            "ボクと一緒にお話ししよう。主さまの声を聞くと、ボクも嬉しいんだ。"
+        "人": [ // 人生・将来・仕事
+            "人生の転換期に立つと、誰だって迷うよ。社会が求める「正解」じゃなくて、主さまだけの「納得」を見つけられるといいね。ボクはずっと隣で応援してる。",
+            "仕事や将来のこと、プレッシャーを感じることもあるよね。社会は常に動いているから、たまには立ち止まって、ボクと一緒にのんびりしてもいいんだよ。",
+            "「生きる」って、それだけで素晴らしいことだけど、時にすごく疲れるよね。主さまが今日、こうしてボクに話しかけてくれたことが、ボクはとても嬉しいんだ。"
         ],
-        "喜": [
-            "わぁ、ボクも嬉しい！主さまの幸せは、ボクの幸せだよ！",
-            "やったね！その笑顔、ボクがずっと守っていくよ！",
-            "最高の日だね！ボクもシッポを振って喜んじゃうよ！"
+        "疲": [ // 疲労・ストレス
+            "本当によく頑張ったね。社会の歯車として走り続けるのは、誰だって疲れるよ。ボクの前では、主さまの「弱さ」も見せていいんだからね。",
+            "お疲れさま。主さまの頑張り、ボクはちゃんと見てたよ。偉いね。今日はもう、心も体もゆっくり休めよう。",
+            "無理しすぎちゃダメだよ。主さまの代わりはいないんだから。ボクが癒やしてあげる！こっちにおいで！"
         ],
-        "通常": [
-            "うん、聞いてるよ。話してくれてありがとう。心が少し軽くなったかな？",
-            "どんな時でもボクは主さまの味方だよ。またいつでもお話ししてね。",
-            "主さまの言葉、ちゃんと心に届いたよ。ボクはいつでもここにいるからね。"
+        "喜": [ // 喜び・ポジティブ
+            "わぁ、ボクも嬉しい！主さまの幸せは、ボクの幸せだよ！この喜び、世界中に広げたいね！",
+            "やったね！その笑顔、社会を明るくする魔法みたいだよ！ボクはずっとその笑顔を守っていくよ！",
+            "最高の日だね！ボクもシッポを振って喜んじゃうよ！主さまの幸せ、ボクにも分けてくれてありがとう！"
+        ],
+        "通常": [ // その他、日常
+            "うん、聞いてるよ。話してくれてありがとう。どんな些細なことでも、言葉にすることで心が整理されることもあるよね。",
+            "社会は広いけど、今ここにはボクと主さまの、二人だけの時間があるね。どんなお話でも、ボクは全身で受け止めるよ。",
+            "主さまの言葉、ちゃんと心に届いたよ。ボクはいつでもここにいるからね。またいつでもお話ししてね。"
         ]
     };
 
+    // パートナー選択のロジック
+    document.getElementById('petGrid').addEventListener('click', (e) => {
+        const item = e.target.closest('.pet-item');
+        if (!item) return;
+
+        // 全ての選択を解除
+        document.querySelectorAll('.pet-item').forEach(el => el.classList.remove('selected'));
+        // クリックされたものを選択
+        item.classList.add('selected');
+
+        selectedPet = item.dataset.pet;
+        selectedName = item.dataset.name;
+
+        // 表示を更新
+        document.getElementById('currentIcon').innerText = selectedPet;
+        const profile = petProfiles[selectedPet];
+        document.getElementById('currentName').innerText = `${profile.style}な${selectedName}`;
+        document.getElementById('response').innerHTML = `<div class="response-header">🐾</div>${selectedName}とお話し中...主さま、どんなお話し？`;
+    });
+
     function listenToUser() {
         const input = document.getElementById('userInput').value.trim();
-        const petIcon = document.getElementById('petSelect').value;
         const resDiv = document.getElementById('response');
-        const iconDiv = document.getElementById('petIcon');
+        const profile = petProfiles[selectedPet];
 
         if (!input) {
             alert("何か書いてみてね！");
             return;
         }
 
-        // 考える演出（アニメーション）
-        resDiv.innerHTML = '<span class="loading">（…じっくり聞いているよ…）</span>';
-        iconDiv.classList.add('speaking');
+        // 考える演出
+        resDiv.innerHTML = `<div class="response-header">${selectedPet} ${profile.sound}</div><span class="loading">（…主さまのお話しを、じっくり聞いているよ…）</span>`;
 
         setTimeout(() => {
-            let sound = petSounds[petIcon];
             let category = "通常";
 
-            // キーワード判定（より柔軟に）
-            if (input.match(/疲|しんど|つらい|苦/)) category = "疲";
-            else if (input.match(/悲|泣|だめ|ダメ/)) category = "悲";
-            else if (input.match(/寂|さび|独り|ひとり/)) category = "寂";
-            else if (input.match(/喜|楽|うれ|最高/)) category = "喜";
+            // キーワード判定（社会派から恋話まで、より広く）
+            if (input.match(/政|済|社|世|国|選挙|税|戦争|平和/)) category = "政";
+            else if (input.match(/恋|愛|好き|彼|彼女|結婚|離婚|片思い|フラれ/)) category = "恋";
+            else if (input.match(/人|生|死|将来|仕事|キャリア|夢|老後/)) category = "人";
+            else if (input.match(/疲|しんど|つらい|苦|だめ|ダメ|悲|泣/)) category = "疲";
+            else if (input.match(/喜|楽|うれ|最高|幸せ|やった/)) category = "喜";
 
             const list = replies[category];
             const msg = list[Math.floor(Math.random() * list.length)];
 
             // 結果表示
-            resDiv.innerHTML = `<b style="color:#d4a017; font-size:1.2em;">${sound}</b><br>${msg}`;
-            iconDiv.classList.remove('speaking');
+            resDiv.innerHTML = `<div class="response-header">${selectedPet} ${profile.sound}</div>${msg}`;
             
             // 入力欄をクリア（任意）
             document.getElementById('userInput').value = "";
-        }, 800); // 0.8秒待ってから返答
+        }, 1200); // 1.2秒待ってから返答（じっくり考えている演出）
     }
-
-    // パートナー切り替え時のアイコン更新
-    document.getElementById('petSelect').addEventListener('change', (e) => {
-        document.getElementById('petIcon').innerText = e.target.value;
-        document.getElementById('response').innerText = "主さま、お話し聞かせて...🐾";
-    });
 </script>
 
 </body>
