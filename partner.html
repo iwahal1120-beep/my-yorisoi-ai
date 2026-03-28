@@ -1,50 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>24h Partner｜本音の深淵</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { --main: #ff7e5f; --bg: #fffdf5; }
+        body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
+        #selector { padding: 20px; overflow-y: auto; text-align: center; flex: 1; }
+        .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.2s; }
+        .pet-card:hover { border-color: var(--main); background: #fffaf0; }
+        .pet-card .emoji { font-size: 35px; display: block; }
+        .pet-card b { font-size: 0.9rem; color: #333; }
+        #chat { display: none; flex-direction: column; height: 100%; }
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 14px; border-radius: 20px; font-size: 1rem; line-height: 1.5; position: relative; }
+        .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
+        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; }
+        .avatar-badge { position: absolute; top: -15px; left: -10px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .input-area { padding: 15px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; }
+        textarea { flex: 1; height: 45px; border: 1px solid #ddd; border-radius: 12px; padding: 8px; resize: none; outline: none; }
+        .send-btn { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="selector">
+        <h3 style="color:var(--main); margin:0;">10匹の相棒</h3>
+        <div class="pet-grid" id="grid"></div>
+    </div>
+    <div id="chat">
+        <div class="header">
+            <button onclick="location.reload()" style="border:none; background:none; color:var(--main); cursor:pointer;">◀戻る</button>
+            <b id="activeTitle"></b>
+            <span></span>
+        </div>
+        <div id="log"></div>
+        <div class="input-area">
+            <textarea id="userInput" placeholder="本音を吐き出して..."></textarea>
+            <button class="send-btn" onclick="aiTalk()">送信</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // 10匹のデータと初期セリフを「相談の核心」に特化
-    const PET_LIST = [
-        {i: "🐶", n: "ペチ", t: "誠実な共感", d: "綺麗事は言わない。あなたの泥臭い本音をそのまま投げて。"},
-        {i: "🐱", n: "タマ", t: "自由な視点", d: "世間の『正しい』に疲れたんでしょ。ここなら全部脱ぎ捨てていいよ。"},
-        {i: "🐰", n: "ピョン", t: "微細な共鳴", d: "言葉に詰まってもいい。あなたの震える心、ボクが先に読み解くから。"},
-        {i: "🦊", n: "コン", t: "理知のメス", d: "感情のゴミ山から、本質だけを救い出そう。何が一番許せない？"},
-        {i: "🐻", n: "クマ", t: "不動の抱擁", d: "お前の怒りは正しい。俺が受け止める。ぶつけてこい。"},
-        {i: "🦁", n: "レオ", t: "勇気の源泉", d: "牙を抜かれたままにするな。お前の誇り、ここで取り戻そうぜ。"},
-        {i: "🐼", n: "パン", t: "平穏の呼吸", d: "外の雑音は消した。さあ、あなたの『本当の絶望』を教えて。"},
-        {i: "🐥", n: "ピー", t: "無垢な真実", d: "大人の事情なんて知らない。あなたが今、一番叫びたいことは何？"},
-        {i: "🐹", n: "ハム", t: "日常の護り", d: "小さなトゲが刺さってるんだね。抜いてあげるから、隠さず見せて。"},
-        {i: "🐧", n: "ペン", t: "俯瞰の知恵", d: "袋小路にいるみたいだね。視点を変えれば、そこは出口かもしれないよ。"}
+    // 10キャラを「定数」として独立。絶対に減らしません。
+    const MASTER_PETS = [
+        {i:"🐶", n:"ペチ", t:"共感"}, {i:"🐱", n:"タマ", t:"自由"}, {i:"🐰", n:"ピョン", t:"繊細"},
+        {i:"🦊", n:"コン", t:"理知"}, {i:"🐻", n:"クマ", t:"包容"}, {i:"🦁", n:"レオ", t:"勇気"},
+        {i:"🐼", n:"パン", t:"平穏"}, {i:"🐥", n:"ピー", t:"純粋"}, {i:"🐹", n:"ハム", t:"護り"}, {i:"🐧", n:"ペン", t:"俯瞰"}
     ];
 
-    // AIの初打：ユーザーの最初の一言に対する「超速・核心」レスポンス
-    function aiInsight() {
+    let current = {};
+    const grid = document.getElementById('grid');
+    MASTER_PETS.forEach(p => {
+        const d = document.createElement('div');
+        d.className = 'pet-card';
+        d.onclick = () => {
+            current = p;
+            document.getElementById('selector').style.display='none';
+            document.getElementById('chat').style.display='flex';
+            document.getElementById('activeTitle').innerText = p.i + " " + p.n;
+            addMsg('pet', `よく来たね、${p.n}だよ。周りに言えない「理由」や「本音」、ここでなら全部吐き出していいんだよ。`);
+        };
+        d.innerHTML = `<span class="emoji">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
+        grid.appendChild(d);
+    });
+
+    function addMsg(type, text) {
+        const log = document.getElementById('log');
+        const m = document.createElement('div');
+        m.className = `msg ${type}`;
+        m.innerHTML = type === 'pet' ? `<span class="avatar-badge">${current.i}</span>${text}` : text;
+        log.appendChild(m);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function aiTalk() {
         const input = document.getElementById('userInput');
         const val = input.value.trim();
         if(!val) return;
-
         addMsg('user', val);
         input.value = "";
 
         setTimeout(() => {
+            const n = current.n;
             let res = "";
-            const n = currentPet.n;
 
-            // 文字数や単語から「切実さ」を緊急判定
-            const isEmergency = val.match(/死|消|限界|もう嫌|助けて|最悪/);
-            const isSocialAnger = val.match(/政治|日本|税|不公平|おかしい|社会/);
-
-            if(isEmergency) {
-                res = `「${val}」…その言葉が出るまで、どれだけの地獄を独りで歩いてきたの。今は説明なんていらない。${n}があなたの盾になる。少しだけ、ここで肩の荷を下ろして。`;
-            }
-            else if(isSocialAnger) {
-                res = `その憤りは、あなたが腐っていない証拠だ。世の中の歪みを真正面から見ているからこそ、痛むんだよね。その『歪みの正体』、一緒に暴いてやろうよ。`;
-            }
-            else if(val.length < 10) {
-                // 短い言葉の裏にある「言えない想い」を突く
-                res = `「${val}」という短い言葉の裏に、もっと巨大な感情が隠れているのを感じるよ。無理にまとめなくていい、断片的なままでいいから、もっと吐き出して。`;
-            }
-            else {
-                // 洞察を加えた肯定
-                res = `話してくれてありがとう。あなたの言葉からは、深い知性と、それゆえの強い孤独が伝わってくる。${n}には、あなたが「本当はこうあるべきだ」と願っている理想が見える気がするよ。`;
+            // 【会話ロジック】ユーザーの言葉を拾って返す
+            if(val.match(/政治|日本|社会|おかしい|不公平|税/)) {
+                res = `「${val.substring(0,10)}…」というあなたの憤り、${n}は真っ当だと思う。その歪んだ社会の中で、あなたが一番守りたい「正義」って何？`;
+            } else if(val.match(/死|消|ダメ|つら|限界/)) {
+                res = `「${val}」なんて言わせるほど、世界はあなたを追い詰めたんだね。今は理由なんて後回しでいい。${n}があなたの味方でいるから。`;
+            } else if(val.length > 20) {
+                res = `あなたの言葉の重み、しっかり受け止めたよ。今の話の中で、あなたが一番「納得がいかない」と感じているポイントを詳しく教えて。`;
+            } else {
+                res = `「${val}」という言葉に込めたあなたの想い、もっと深く知りたいな。${n}と一緒に、その理由を解き明かしていこうよ。`;
             }
             addMsg('pet', res);
-        }, 800); // 反応速度も速める（待たせない）
+        }, 1000);
     }
 </script>
+</body>
+</html>
