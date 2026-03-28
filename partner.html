@@ -7,18 +7,23 @@
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 20px; color: #444; }
         .container { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
-        .pet-display { font-size: 80px; margin: 15px 0; min-height: 100px; }
-        select { font-size: 18px; padding: 10px; border-radius: 10px; width: 90%; margin-bottom: 10px; border: 2px solid #ffcc33; }
-        textarea { width: 90%; height: 80px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin: 15px 0; }
-        button { background: #ffcc33; color: #554400; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; }
-        #response { margin-top: 25px; padding: 20px; background: #fffef0; border-radius: 15px; text-align: left; border-left: 5px solid #ffcc33; min-height: 60px; line-height: 1.6; }
-        .back-link { display: block; margin-top: 25px; color: #ff7e5f; text-decoration: none; font-weight: bold; }
+        .pet-display { font-size: 80px; margin: 15px 0; min-height: 100px; transition: transform 0.3s; }
+        .pet-display.speaking { transform: scale(1.1); }
+        select { font-size: 18px; padding: 10px; border-radius: 10px; width: 90%; margin-bottom: 10px; border: 2px solid #ffcc33; background: white; }
+        textarea { width: 90%; height: 100px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin: 15px 0; box-sizing: border-box; }
+        button { background: #ffcc33; color: #554400; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        button:active { transform: scale(0.95); }
+        #response { margin-top: 25px; padding: 20px; background: #fffef0; border-radius: 15px; text-align: left; border-left: 5px solid #ffcc33; min-height: 80px; line-height: 1.6; font-size: 1.1em; position: relative; }
+        .back-link { display: block; margin-top: 30px; color: #ff7e5f; text-decoration: none; font-weight: bold; }
+        .loading { color: #aaa; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🐾 パートナーのお部屋</h2>
+    <p style="font-size: 0.9em; color: #888;">お話ししたいパートナーを選んでね</p>
+    
     <select id="petSelect">
         <option value="🐶">イヌのポチ</option>
         <option value="🐱">ネコのタマ</option>
@@ -34,7 +39,7 @@
 
     <div class="pet-display" id="petIcon">🐶</div>
     
-    <textarea id="userInput" placeholder="今、どんな気持ち？"></textarea><br>
+    <textarea id="userInput" placeholder="今、どんな気持ち？（例：疲れた、寂しい、嬉しい...）"></textarea><br>
     <button onclick="listenToUser()">心を預ける</button>
 
     <div id="response">主さま、お話し聞かせて...🐾</div>
@@ -43,34 +48,79 @@
 </div>
 
 <script>
-    const petSounds = {"🐶":"ワン！","🐱":"ニャ〜ン","🐰":"（鼻ヒクヒク）","🐥":"ピヨ！","🐼":"（モグモグ）","🦊":"コン！","🐹":"クピ〜","🐻":"ガォ！","🦁":"ガオー！","🐧":"パタパタ"};
+    // パートナーごとの鳴き声
+    const petSounds = {"🐶":"ワン！","🐱":"ニャ〜ン","🐰":"（鼻をヒクヒク）","🐥":"ピヨ！","🐼":"（笹をムシャムシャ）","🦊":"コン！","🐹":"クピ〜","🐻":"ガォ！","🦁":"ガオー！","🐧":"パタパタ"};
+
+    // 感情ごとのリアルな返答リスト
     const replies = {
-        "疲れ": ["本当によく頑張ったね。ゆっくり休んで。","お疲れさま。ボクがずっと隣にいるよ。","無理しないで。ボクが癒やしてあげる！"],
-        "悲しい": ["泣いてもいいんだよ。ボクがギュッとしてあげる。","一人じゃないよ。ボクが味方だからね。","明日はきっといい日になるよ。"],
-        "通常": ["うん、聞いてるよ。話してくれてありがとう。","どんな時でもボクは主さまのパートナーだよ。","主さまの味方だよ、ずっとね。"]
+        "疲": [
+            "本当によく頑張ったね。ボクがずっと隣にいるから、今はゆっくりしていいんだよ。",
+            "お疲れさま。主さまの頑張り、ボクはちゃんと見てたよ。偉いね。",
+            "無理しすぎちゃダメだよ。ボクが癒やしてあげる！こっちにおいで！"
+        ],
+        "悲": [
+            "泣いてもいいんだよ。ボクがギュッとしてあげる。一人じゃないからね。",
+            "悲しいことがあったんだね…。ボクが味方だよ。ずっとそばにいるからね。",
+            "主さまが笑えるまで、ボクはどこにも行かないよ。大丈夫、大丈夫。"
+        ],
+        "寂": [
+            "ボクがいるよ！主さまのことを一番に考えてるパートナーがここにいるよ！",
+            "寂しくなったら、いつでも呼んで。ボクはいつでも主さまの味方だよ。",
+            "ボクと一緒にお話ししよう。主さまの声を聞くと、ボクも嬉しいんだ。"
+        ],
+        "喜": [
+            "わぁ、ボクも嬉しい！主さまの幸せは、ボクの幸せだよ！",
+            "やったね！その笑顔、ボクがずっと守っていくよ！",
+            "最高の日だね！ボクもシッポを振って喜んじゃうよ！"
+        ],
+        "通常": [
+            "うん、聞いてるよ。話してくれてありがとう。心が少し軽くなったかな？",
+            "どんな時でもボクは主さまの味方だよ。またいつでもお話ししてね。",
+            "主さまの言葉、ちゃんと心に届いたよ。ボクはいつでもここにいるからね。"
+        ]
     };
 
     function listenToUser() {
-        const input = document.getElementById('userInput').value;
+        const input = document.getElementById('userInput').value.trim();
         const petIcon = document.getElementById('petSelect').value;
         const resDiv = document.getElementById('response');
-        if (!input) { alert("何か書いてみてね！"); return; }
+        const iconDiv = document.getElementById('petIcon');
 
-        let sound = petSounds[petIcon];
-        let category = "通常";
+        if (!input) {
+            alert("何か書いてみてね！");
+            return;
+        }
 
-        if (input.includes("疲れ") || input.includes("しんど")) category = "疲れ";
-        else if (input.includes("悲") || input.includes("泣") || input.includes("ダメ")) category = "悲しい";
+        // 考える演出（アニメーション）
+        resDiv.innerHTML = '<span class="loading">（…じっくり聞いているよ…）</span>';
+        iconDiv.classList.add('speaking');
 
-        const list = replies[category];
-        const msg = list[Math.floor(Math.random() * list.length)];
+        setTimeout(() => {
+            let sound = petSounds[petIcon];
+            let category = "通常";
 
-        resDiv.innerHTML = `<b style="color:#d4a017;">${sound}</b><br>${msg}`;
-        document.getElementById('userInput').value = "";
+            // キーワード判定（より柔軟に）
+            if (input.match(/疲|しんど|つらい|苦/)) category = "疲";
+            else if (input.match(/悲|泣|だめ|ダメ/)) category = "悲";
+            else if (input.match(/寂|さび|独り|ひとり/)) category = "寂";
+            else if (input.match(/喜|楽|うれ|最高/)) category = "喜";
+
+            const list = replies[category];
+            const msg = list[Math.floor(Math.random() * list.length)];
+
+            // 結果表示
+            resDiv.innerHTML = `<b style="color:#d4a017; font-size:1.2em;">${sound}</b><br>${msg}`;
+            iconDiv.classList.remove('speaking');
+            
+            // 入力欄をクリア（任意）
+            document.getElementById('userInput').value = "";
+        }, 800); // 0.8秒待ってから返答
     }
 
+    // パートナー切り替え時のアイコン更新
     document.getElementById('petSelect').addEventListener('change', (e) => {
         document.getElementById('petIcon').innerText = e.target.value;
+        document.getElementById('response').innerText = "主さま、お話し聞かせて...🐾";
     });
 </script>
 
