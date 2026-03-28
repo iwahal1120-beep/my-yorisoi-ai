@@ -11,17 +11,18 @@
         .pet-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 30px auto; max-width: 500px; }
         .pet-mini { font-size: 24px; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 45px; height: 45px; line-height: 45px; }
         
-        /* ボタンのデザイン */
+        /* 修正：パートナーに相談するボタン */
         .start-button { 
             display: inline-block; background: #ff7e5f; color: white; border: none;
             padding: 18px 50px; border-radius: 50px; font-size: 1.4em; font-weight: bold; 
             box-shadow: 0 8px 20px rgba(255,126,95,0.4); margin: 20px 0; cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
+            transition: transform 0.1s, background 0.2s; text-decoration: none;
         }
         .start-button:active { transform: scale(0.95); background: #f06a4a; }
+        .free-text { font-size: 0.9em; color: #666; margin-top: -10px; display: block; }
 
         .charity-section { background: white; border: 2px dashed #ffb3a7; margin: 40px 20px; padding: 25px; border-radius: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 10px; font-weight: bold; }
+        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 10px; font-weight: bold; margin-top: 15px; }
         .footer { margin-top: 40px; font-size: 0.85em; color: #999; padding-bottom: 30px; }
     </style>
 </head>
@@ -38,13 +39,18 @@
     </div>
     
     <button onclick="location.href='./partner.html';" class="start-button">
-        パートナーに会う 🐾
+        パートナーに相談する 🐾
     </button>
+    <span class="free-text">ご利用は無料です。</span>
 </div>
 
 <div class="charity-section">
-    <span style="color: #e66b4e; font-weight: bold;">🤝 支援の輪を広げよう</span>
-    <p>皆様からの応援の一部を<b>ユニセフ</b>や<b>国境なき医師団</b>へお届けします。</p>
+    <span style="color: #e66b4e; font-weight: bold; font-size: 1.2em;">🤝 支援の輪を広げよう</span>
+    <p style="line-height: 1.6; color: #555;">
+        当プロジェクトは、皆様からの応援（OFUSE）の一部を、<br>
+        <b>UNICEF（ユニセフ）</b>や<b>国境なき医師団（MSF）</b>へ寄付し、<br>
+        世界中の困難な状況にある方々を支援する活動に役立てます。
+    </p>
     <a href="https://ofuse.me/iwasaki" class="ofuse-button" target="_blank">🍵 制作を応援する（OFUSE）</a>
 </div>
 
