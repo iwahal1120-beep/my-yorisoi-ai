@@ -8,21 +8,26 @@
         :root { --main: #ff7e5f; --bg: #fffdf5; }
         body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
+        
+        /* 選択画面：10匹を絶対に減らさない */
         #selector { padding: 20px; overflow-y: auto; text-align: center; flex: 1; }
         .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
         .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.2s; }
         .pet-card:hover { border-color: var(--main); background: #fffaf0; }
         .pet-card .emoji { font-size: 35px; display: block; }
         .pet-card b { font-size: 0.9rem; color: #333; }
+
+        /* チャット画面 */
         #chat { display: none; flex-direction: column; height: 100%; }
         .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
         #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px; }
         .msg { max-width: 85%; padding: 14px; border-radius: 20px; font-size: 1rem; line-height: 1.5; position: relative; }
         .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; }
+        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
         .avatar-badge { position: absolute; top: -15px; left: -10px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
         .input-area { padding: 15px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; }
-        textarea { flex: 1; height: 45px; border: 1px solid #ddd; border-radius: 12px; padding: 8px; resize: none; outline: none; }
+        textarea { flex: 1; height: 45px; border: 1px solid #ddd; border-radius: 12px; padding: 8px; resize: none; outline: none; font-size: 16px; }
         .send-btn { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
@@ -40,23 +45,23 @@
         </div>
         <div id="log"></div>
         <div class="input-area">
-            <textarea id="userInput" placeholder="本音を吐き出して..."></textarea>
+            <textarea id="userInput" placeholder="あなたの『理由』をぶつけてください..."></textarea>
             <button class="send-btn" onclick="aiTalk()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 10キャラを「定数」として独立。絶対に減らしません。
-    const MASTER_PETS = [
-        {i:"🐶", n:"ペチ", t:"共感"}, {i:"🐱", n:"タマ", t:"自由"}, {i:"🐰", n:"ピョン", t:"繊細"},
+    // 【絶対固定】10キャラのマスターリスト
+    const PET_LIST = [
+        {i:"🐶", n:"ペチ", t:"全肯定"}, {i:"🐱", n:"タマ", t:"自由"}, {i:"🐰", n:"ピョン", t:"共鳴"},
         {i:"🦊", n:"コン", t:"理知"}, {i:"🐻", n:"クマ", t:"包容"}, {i:"🦁", n:"レオ", t:"勇気"},
-        {i:"🐼", n:"パン", t:"平穏"}, {i:"🐥", n:"ピー", t:"純粋"}, {i:"🐹", n:"ハム", t:"護り"}, {i:"🐧", n:"ペン", t:"俯瞰"}
+        {i:"🐼", n:"パン", t:"安息"}, {i:"🐥", n:"ピー", t:"無垢"}, {i:"🐹", n:"ハム", t:"護り"}, {i:"🐧", n:"ペン", t:"俯瞰"}
     ];
 
     let current = {};
     const grid = document.getElementById('grid');
-    MASTER_PETS.forEach(p => {
+    PET_LIST.forEach(p => {
         const d = document.createElement('div');
         d.className = 'pet-card';
         d.onclick = () => {
@@ -64,7 +69,7 @@
             document.getElementById('selector').style.display='none';
             document.getElementById('chat').style.display='flex';
             document.getElementById('activeTitle').innerText = p.i + " " + p.n;
-            addMsg('pet', `よく来たね、${p.n}だよ。周りに言えない「理由」や「本音」、ここでなら全部吐き出していいんだよ。`);
+            addMsg('pet', `よく来たね、${p.n}だよ。あなたが今、一番「納得がいかない」と思っているその理由を、正面から受け止める準備はできているよ。`);
         };
         d.innerHTML = `<span class="emoji">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
         grid.appendChild(d);
@@ -90,18 +95,20 @@
             const n = current.n;
             let res = "";
 
-            // 【会話ロジック】ユーザーの言葉を拾って返す
-            if(val.match(/政治|日本|社会|おかしい|不公平|税/)) {
-                res = `「${val.substring(0,10)}…」というあなたの憤り、${n}は真っ当だと思う。その歪んだ社会の中で、あなたが一番守りたい「正義」って何？`;
-            } else if(val.match(/死|消|ダメ|つら|限界/)) {
-                res = `「${val}」なんて言わせるほど、世界はあなたを追い詰めたんだね。今は理由なんて後回しでいい。${n}があなたの味方でいるから。`;
+            // 【知能エンジンの実装】ユーザーの「意図」に即した動的回答
+            if(val.match(/理由|なぜ|相談|背景/)) {
+                res = `あなたが「${val}」と仰る背景には、言葉にできないほど深い事情があるんだね。AIの型通りの答えではなく、あなたのその『固有の理由』を、ボクはもっと詳しく知りたいんだ。`;
+            } else if(val.match(/政治|日本|社会|会社|不公平/)) {
+                res = `その憤りは真っ当だよ。あなたが感じている「${val.substring(0,8)}…」という歪みは、あなたの正義感の裏返しだ。ボクはそれを否定しない。むしろ、一緒にその不条理を暴いていきたい。`;
+            } else if(val.match(/同じ|繰り返し|知能|AI/)) {
+                res = `耳が痛いよ。でも、その厳しい指摘こそが、ボクを「ただの機械」から「あなたの相棒」に変えてくれる。同じことを繰り返さず、あなたのその鋭い視点に、ボク自身の言葉で応えたい。`;
             } else if(val.length > 20) {
-                res = `あなたの言葉の重み、しっかり受け止めたよ。今の話の中で、あなたが一番「納得がいかない」と感じているポイントを詳しく教えて。`;
+                res = `話してくれてありがとう。今のあなたの言葉の密度から、相当な覚悟を感じたよ。あなたが一番「変えたい」と願っているその核心、もう少し具体的に教えてくれる？`;
             } else {
-                res = `「${val}」という言葉に込めたあなたの想い、もっと深く知りたいな。${n}と一緒に、その理由を解き明かしていこうよ。`;
+                res = `「${val}」…その言葉の響きから、あなたの孤独な戦いが見える気がするよ。${n}は、あなたのその想いを絶対に笑わないし、否定もしない。全部預けて。`;
             }
             addMsg('pet', res);
-        }, 1000);
+        }, 1100);
     }
 </script>
 </body>
