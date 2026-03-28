@@ -2,58 +2,77 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24hパートナー | 寄り添いと支援の輪</title>
+    <title>24hパートナー・お部屋</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffcf5; text-align: center; margin: 0; padding: 0; color: #444; }
-        .hero { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); color: white; padding: 50px 20px; border-radius: 0 0 50px 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-size: 2.2em; letter-spacing: 2px; }
-        .pet-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 30px auto; max-width: 500px; }
-        .pet-mini { font-size: 24px; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 45px; height: 45px; line-height: 45px; }
-        
-        .start-button { 
-            display: inline-block; background: #ff7e5f; color: white; border: none;
-            padding: 18px 50px; border-radius: 50px; font-size: 1.4em; font-weight: bold; 
-            box-shadow: 0 8px 20px rgba(255,126,95,0.4); margin: 20px 0; cursor: pointer;
-            transition: transform 0.1s, background 0.2s; text-decoration: none;
-        }
-        .start-button:active { transform: scale(0.95); background: #f06a4a; }
-        .free-text { font-size: 0.9em; color: #666; margin-top: -10px; display: block; }
-
-        .charity-section { background: white; border: 2px dashed #ffb3a7; margin: 40px 20px; padding: 25px; border-radius: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .ofuse-button { display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 10px; font-weight: bold; margin-top: 15px; }
-        .footer { margin-top: 40px; font-size: 0.85em; color: #999; padding-bottom: 30px; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #fffdf5; text-align: center; padding: 20px; color: #444; }
+        .container { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
+        .pet-display { font-size: 80px; margin: 15px 0; min-height: 100px; }
+        select { font-size: 18px; padding: 10px; border-radius: 10px; width: 90%; margin-bottom: 10px; border: 2px solid #ffcc33; }
+        textarea { width: 90%; height: 80px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; font-size: 16px; margin: 15px 0; }
+        button { background: #ffcc33; color: #554400; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 18px; font-weight: bold; }
+        #response { margin-top: 25px; padding: 20px; background: #fffef0; border-radius: 15px; text-align: left; border-left: 5px solid #ffcc33; min-height: 60px; line-height: 1.6; }
+        .back-link { display: block; margin-top: 25px; color: #ff7e5f; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="hero">
-    <h1>🐾 24hパートナー</h1>
-    <p>あなたの心が軽くなる、10の居場所。</p>
-    <div class="pet-grid">
-        <div class="pet-mini">🐶</div><div class="pet-mini">🐱</div><div class="pet-mini">🐰</div>
-        <div class="pet-mini">🐥</div><div class="pet-mini">🐼</div><div class="pet-mini">🦊</div>
-        <div class="pet-mini">🐹</div><div class="pet-mini">🐻</div><div class="pet-mini">🦁</div>
-        <div class="pet-mini">🐧</div>
-    </div>
+<div class="container">
+    <h2>🐾 パートナーのお部屋</h2>
+    <select id="petSelect">
+        <option value="🐶">イヌのポチ</option>
+        <option value="🐱">ネコのタマ</option>
+        <option value="🐰">ウサギのピョン</option>
+        <option value="🐥">ヒヨコのピー</option>
+        <option value="🐼">パンダのパンパン</option>
+        <option value="🦊">キツネのコン</option>
+        <option value="🐹">ハムスターのハム</option>
+        <option value="🐻">クマのクマゴロウ</option>
+        <option value="🦁">ライオンのレオ</option>
+        <option value="🐧">ペンギンのペンペン</option>
+    </select>
+
+    <div class="pet-display" id="petIcon">🐶</div>
     
-    <button onclick="window.location.href='partner.html';" class="start-button">
-        パートナーに相談する 🐾
-    </button>
-    <span class="free-text">ご利用は無料です。</span>
+    <textarea id="userInput" placeholder="今、どんな気持ち？"></textarea><br>
+    <button onclick="listenToUser()">心を預ける</button>
+
+    <div id="response">主さま、お話し聞かせて...🐾</div>
+
+    <a href="index.html" class="back-link">← トップに戻る</a>
 </div>
 
-<div class="charity-section">
-    <span style="color: #e66b4e; font-weight: bold; font-size: 1.2em;">🤝 支援の輪を広げよう</span>
-    <p style="line-height: 1.6; color: #555;">
-        当プロジェクトは、皆様からの応援（OFUSE）の一部を、<br>
-        <b>UNICEF（ユニセフ）</b>や<b>国境なき医師団（MSF）</b>へ寄付し、<br>
-        世界中の困難な状況にある方々を支援する活動に役立てます。
-    </p>
-    <a href="https://ofuse.me/iwasaki" class="ofuse-button" target="_blank">🍵 制作を応援する（OFUSE）</a>
-</div>
+<script>
+    const petSounds = {"🐶":"ワン！","🐱":"ニャ〜ン","🐰":"（鼻ヒクヒク）","🐥":"ピヨ！","🐼":"（モグモグ）","🦊":"コン！","🐹":"クピ〜","🐻":"ガォ！","🦁":"ガオー！","🐧":"パタパタ"};
+    const replies = {
+        "疲れ": ["本当によく頑張ったね。ゆっくり休んで。","お疲れさま。ボクがずっと隣にいるよ。","無理しないで。ボクが癒やしてあげる！"],
+        "悲しい": ["泣いてもいいんだよ。ボクがギュッとしてあげる。","一人じゃないよ。ボクが味方だからね。","明日はきっといい日になるよ。"],
+        "通常": ["うん、聞いてるよ。話してくれてありがとう。","どんな時でもボクは主さまのパートナーだよ。","主さまの味方だよ、ずっとね。"]
+    };
 
-<div class="footer">© 2026 24h Partner Project.</div>
+    function listenToUser() {
+        const input = document.getElementById('userInput').value;
+        const petIcon = document.getElementById('petSelect').value;
+        const resDiv = document.getElementById('response');
+        if (!input) { alert("何か書いてみてね！"); return; }
+
+        let sound = petSounds[petIcon];
+        let category = "通常";
+
+        if (input.includes("疲れ") || input.includes("しんど")) category = "疲れ";
+        else if (input.includes("悲") || input.includes("泣") || input.includes("ダメ")) category = "悲しい";
+
+        const list = replies[category];
+        const msg = list[Math.floor(Math.random() * list.length)];
+
+        resDiv.innerHTML = `<b style="color:#d4a017;">${sound}</b><br>${msg}`;
+        document.getElementById('userInput').value = "";
+    }
+
+    document.getElementById('petSelect').addEventListener('change', (e) => {
+        document.getElementById('petIcon').innerText = e.target.value;
+    });
+</script>
 
 </body>
 </html>
