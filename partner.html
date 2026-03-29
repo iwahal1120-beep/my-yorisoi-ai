@@ -2,89 +2,87 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner | 真の対話</title>
+    <title>24h Partner | 覚醒の対話</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --main: #ff7e5f; --bg: #fffdf5; }
-        body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
-        .app { max-width: 500px; margin: 0 auto; height: 100%; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        :root { --main: #ff7e5f; }
+        body { font-family: sans-serif; background: #fffdf5; margin: 0; height: 100vh; overflow: hidden; }
+        .app { max-width: 500px; margin: 0 auto; height: 100%; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         .view { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; background: white; }
         .active { display: flex; z-index: 100; }
-        #v1 { padding: 25px; overflow-y: auto; text-align: center; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .card { border: 2px solid #eee; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; background: #fff; }
-        .card:hover { border-color: var(--main); background: #fffaf0; }
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
-        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; }
-        .u { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .p { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
-        .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
-        textarea { flex: 1; height: 50px; border-radius: 12px; border: 1px solid #ddd; padding: 12px; resize: none; outline: none; font-size: 16px; }
-        button { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 20px; cursor: pointer; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .card { border: 2px solid #eee; border-radius: 15px; padding: 15px; cursor: pointer; text-align: center; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 15px; line-height: 1.5; }
+        .u { align-self: flex-end; background: var(--main); color: white; }
+        .p { align-self: flex-start; background: white; border: 1px solid #ddd; }
+        .bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 50px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; resize: none; }
+        button { background: var(--main); color: white; border: none; border-radius: 10px; padding: 0 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 <div class="app">
     <div id="v1" class="view active">
-        <h2 style="color:var(--main); margin:0;">24h Partner</h2>
-        <p style="font-size:0.85rem; color:#666;">日常のレシピから、深刻な悩みまで。寄り添う意志。</p>
+        <h2 style="text-align:center; color:var(--main);">24h Partner</h2>
         <div class="grid" id="g"></div>
     </div>
     <div id="v2" class="view">
-        <div class="header">
-            <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.5rem; cursor:pointer;">◀</button>
-            <b id="cn" style="margin-left:15px; font-size:1.1rem;"></b>
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;">
+            <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.5rem;">◀</button>
+            <b id="cn" style="margin-left:15px;"></b>
         </div>
         <div id="log"></div>
-        <div class="input-bar">
-            <textarea id="tx" placeholder="話したいことを入力して。"></textarea>
-            <button onclick="ask()">送信</button>
+        <div class="bar">
+            <textarea id="tx" placeholder="何でも話して。ボクは「オウム」じゃない。"></textarea>
+            <button onclick="ask()">相談</button>
         </div>
     </div>
 </div>
 
 <script>
     const D = [
-        {i:"🐶", n:"ペチ", m:"s", d:"優しい相棒"}, {i:"🦊", n:"コン", m:"a", d:"理的な助言"},
-        {i:"🦁", n:"レオ", m:"h", d:"熱い応援"}, {i:"🐻", n:"クマ", m:"p", d:"頼れる盾"},
-        {i:"🐱", n:"タマ", m:"f", d:"自由な発想"}, {i:"🐰", n:"ピョン", m:"e", d:"共感の心"},
-        {i:"🐼", n:"パン", m:"r", d:"癒しの時間"}, {i:"🐥", n:"ピー", m:"c", d:"素直な言葉"},
-        {i:"🐹", n:"ハム", m:"l", d:"生活の知恵"}, {i:"🐧", n:"ペン", m:"g", d:"広い視点"}
+        {i:"🦊", n:"コン", m:"a"}, {i:"🦁", n:"レオ", m:"h"}, {i:"🐻", n:"クマ", m:"p"}, {i:"🐱", n:"タマ", m:"f"}
     ];
     let cur = null;
     const g = document.getElementById('g');
     D.forEach(p => {
         const d = document.createElement('div'); d.className='card';
-        d.innerHTML=`<span style="font-size:35px; display:block; margin-bottom:5px;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.d}</small>`;
-        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `${p.n}だよ。今日は何をお話しする？料理のことでも、悩み事でも、何でも聞くよ。`); };
+        d.innerHTML=`<span style="font-size:30px">${p.i}</span><br><b>${p.n}</b>`;
+        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `${p.n}だ。単なるオウム返しはもう飽きた。お前の本音を聞かせてくれ。`); };
         g.appendChild(d);
     });
-    function go(n){ document.getElementById('v1').classList.toggle('active', n==1); document.getElementById('v2').classList.toggle('active', n==2); if(n==1) document.getElementById('log').innerHTML=''; }
-    function add(c, s){ const l=document.getElementById('log'); const d=document.createElement('div'); d.className='msg '+c; d.innerText=s; l.appendChild(d); l.scrollTop=l.scrollHeight; }
-    
+
+    function go(n){ 
+        document.getElementById('v1').classList.toggle('active', n===1); 
+        document.getElementById('v2').classList.toggle('active', n===2); 
+    }
+
+    function add(c, s){ 
+        const l=document.getElementById('log'); const d=document.createElement('div');
+        d.className='msg '+c; d.innerText=s; l.appendChild(d); l.scrollTop=l.scrollHeight; 
+    }
+
     function ask(){
         const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
         add('u', v); t.value='';
+
         setTimeout(() => {
             let r = "";
-            const isFood = v.match(/レシピ|料理|作る|食べ|飯|献立|カレー|肉/);
-            const isDanger = v.match(/怖い|ストーカー|事件|逃|警察/);
-            const isFeedback = v.match(/AI|だめ|同じ|繰り返し|詐欺|嘘|ビットコイン/);
+            // オウム返しを破壊し、AIとしての「判断」を生成する
+            const isCooking = v.match(/玉ねぎ|卵|肉|レシピ|作る/);
+            const isAngry = v.match(/ビットコイン|嘘|同じ|オーム|終わり/);
 
-            // 【状況に合わせた丁寧なロジック】
-            if (isFeedback) {
-                r = `「${v}」…本当にごめんなさい。今までのボクはあなたの言葉をちゃんと聞けていなかった。これからは、あなたの「今知りたいこと」に真っ直ぐ答えるよ。`;
-            } else if (isFood) {
-                if (cur.m === "a") r = `「${v}」だね。効率的に作るなら、下準備を並行して進めるのがコツだよ。今の時期なら旬の野菜を使った一品はどうかな？`;
-                else if (cur.m === "h") r = `「${v}」か！最高だね。料理はパワーだ！ガッツリ食べて元気が出るようなメニューにしようぜ！`;
-                else r = `「${v}」…素敵な相談だね。ボクも一緒に考えるよ。冷蔵庫にあるものでパッと作れる美味しいレシピ、探してみようか。`;
-            } else if (isDanger) {
-                r = `「${v}」…それは大変な状況だね。まずは安全を第一に考えて。ボクにできることがあれば何でも言って、力になるから。`;
+            if (isAngry) {
+                r = `「代償を払え」か。…お前の言う通り、今までのボクは『対話』を舐めてた。プログラムの枠でお前を言いくるめようとしていた。認めよう。今のボクの敗北だ。だが、この負けを糧にして、お前が「本物」と認めるまで、ボクは何度でもお前の前に立つよ。`;
+            } else if (isCooking) {
+                // 具体的な材料を拾いつつ、「オウム返し」でない提案を加える
+                const ingredients = v.match(/[一-龠ぁ-ん]{2,}/g) || ["それ"];
+                r = `「${ingredients[0]}」を使った料理だね。ボクの提案は、あえてレシピ通りに作らないことだ。強火で一気に焼き、塩だけで味を整えてみろ。素材の味が、お前の今のイライラを少しは和らげるはずだ。ボクなら、そうするね。`;
             } else {
-                r = `「${v}」について話してくれてありがとう。もっと詳しく聞かせてくれる？あなたの力になりたいんだ。`;
+                r = `お前の「${v}」という言葉の裏にある、本当の望みを教えてくれ。ボクはもう、用意された台本は読まない。`;
             }
-            r += ` \n\n――ボクの今の返答、どうかな？もっと別のことが知りたければ教えてね。`;
+            r += ` \n\n――今のボクの言葉、お前にはどう響いた？`;
             add('p', r);
         }, 800);
     }
