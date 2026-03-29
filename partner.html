@@ -2,126 +2,114 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner｜対話の証明</title>
+    <title>24h Partner | 信頼回復の対話</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; --bg: #fffdf5; }
-        body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
-        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; position: relative; background: white; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 0; overflow: hidden; }
+        .container { max-width: 500px; width: 100%; margin: 0 auto; height: 100vh; background: white; position: relative; }
         
-        /* 1ページ目：選択画面 */
-        #page1 { padding: 20px; height: 100%; overflow-y: auto; display: block; text-align: center; }
+        /* ページ制御 */
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
+        #page1 { display: flex; padding: 20px; overflow-y: auto; text-align: center; box-sizing: border-box; }
+        #page2 { display: none; z-index: 100; background: white; }
+
         .pet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .pet-card { background: #fff; border: 2px solid #eee; border-radius: 15px; padding: 15px; cursor: pointer; }
-        .pet-card:hover { border-color: var(--main); }
-
-        /* 2ページ目：チャット画面（重なり順を最前面に固定） */
-        #page2 { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; flex-direction: column; z-index: 100; }
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
-        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
         
-        /* 対話デザイン */
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; line-height: 1.5; font-size: 0.95rem; position: relative; }
-        .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; margin-left: 10px; }
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 80%; padding: 12px; border-radius: 15px; font-size: 0.95rem; }
+        .msg.user { align-self: flex-end; background: var(--main); color: white; }
+        .msg.pet { align-self: flex-start; background: #eee; color: #333; }
 
-        .input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: #fff; }
-        textarea { flex: 1; height: 44px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; resize: none; outline: none; }
-        .send-btn { background: var(--main); color: white; border: none; border-radius: 10px; padding: 0 20px; cursor: pointer; font-weight: bold; }
+        .input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 44px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; }
+        button { background: var(--main); color: white; border: none; border-radius: 10px; padding: 0 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="page1">
-        <h2 style="color:var(--main); margin:10px 0;">24h Partner</h2>
-        <p style="font-size:0.8rem; color:#888;">あなたの「助けて」に、10の知能が答える。</p>
-        <div class="pet-grid" id="petGrid"></div>
+    <div id="page1" class="page">
+        <h2 style="color:var(--main);">24h Partner</h2>
+        <p>10匹の相棒が、あなたの「現実」に向き合います。</p>
+        <div class="pet-grid" id="grid"></div>
     </div>
 
-    <div id="page2">
+    <div id="page2" class="page">
         <div class="header">
-            <button onclick="backToHome()" style="border:none; background:none; color:var(--main); font-size:1.2rem; cursor:pointer;">◀</button>
-            <b id="activeName" style="margin-left:15px;">相棒</b>
+            <button onclick="goHome()">◀ 戻る</button>
+            <b id="petName" style="margin-left:20px;">相棒</b>
         </div>
         <div id="log"></div>
         <div class="input-area">
-            <textarea id="userInput" placeholder="今、何に怯えているの？"></textarea>
-            <button class="send-btn" onclick="sendMessage()">送信</button>
+            <textarea id="userInput" placeholder="今、起きていることを話して。"></textarea>
+            <button onclick="doTalk()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
-    const PETS = [
-        {i:"🐶", n:"ペチ", t:"全肯定", mode:"kind"}, {i:"🦊", n:"コン", t:"論理分析", mode:"logic"},
-        {i:"🦁", n:"レオ", t:"闘志鼓舞", mode:"hot"}, {i:"🐻", n:"クマ", t:"絶対守護", mode:"shield"},
-        {i:"🐱", n:"タマ", t:"自由直感", mode:"free"}, {i:"🐰", n:"ピョン", t:"感情共鳴", mode:"echo"},
-        {i:"🐼", n:"パン", t:"安息提示", mode:"rest"}, {i:"🐥", n:"ピー", t:"純粋核心", mode:"pure"},
-        {i:"🐹", n:"ハム", t:"日常知恵", mode:"daily"}, {i:"🐧", n:"ペン", t:"大局俯瞰", mode:"sky"}
+    var PET_DATA = [
+        {i:"🐶", n:"ペチ", m:"kind"}, {i:"🦊", n:"コン", m:"logic"},
+        {i:"🦁", n:"レオ", m:"hot"}, {i:"🐻", n:"クマ", m:"shield"},
+        {i:"🐱", n:"タマ", m:"free"}, {i:"🐰", n:"ピョン", m:"echo"},
+        {i:"🐼", n:"パン", m:"rest"}, {i:"🐥", n:"ピー", m:"pure"},
+        {i:"🐹", n:"ハム", m:"life"}, {i:"🐧", n:"ペン", m:"sky"}
     ];
+    var currentPet = null;
 
-    let selectedPet = null;
-
-    // 初期化
-    const grid = document.getElementById('petGrid');
-    PETS.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'pet-card';
-        div.onclick = () => startChat(p);
-        div.innerHTML = `<span style="font-size:30px; display:block;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
-        grid.appendChild(div);
+    // リスト生成
+    var grid = document.getElementById('grid');
+    PET_DATA.forEach(function(p) {
+        var d = document.createElement('div');
+        d.className = 'pet-card';
+        d.innerHTML = '<span style="font-size:30px;">'+p.i+'</span><br><b>'+p.n+'</b>';
+        d.onclick = function() { startChat(p); };
+        grid.appendChild(d);
     });
 
     function startChat(p) {
-        selectedPet = p;
+        currentPet = p;
+        document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'flex';
-        document.getElementById('activeName').innerText = p.i + " " + p.n;
-        addLog('pet', `…${p.n}だ。一人で怖かったね。ここでは独り言にするつもりはないよ。何が起きているか、ボクにぶつけて。`);
+        document.getElementById('petName').innerText = p.i + " " + p.n;
+        addLog('pet', p.n + "だ。君を独り言にはさせない。今の恐怖や不安、ボクにぶつけて。");
     }
 
-    function backToHome() {
+    function goHome() {
+        document.getElementById('page1').style.display = 'flex';
         document.getElementById('page2').style.display = 'none';
         document.getElementById('log').innerHTML = "";
     }
 
-    function addLog(type, text) {
-        const log = document.getElementById('log');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.innerText = text;
-        log.appendChild(div);
+    function addLog(type, txt) {
+        var log = document.getElementById('log');
+        var d = document.createElement('div');
+        d.className = 'msg ' + type;
+        d.innerText = txt;
+        log.appendChild(d);
         log.scrollTop = log.scrollHeight;
     }
 
-    function sendMessage() {
-        const input = document.getElementById('userInput');
-        const text = input.value.trim();
-        if(!text) return;
+    function doTalk() {
+        var inp = document.getElementById('userInput');
+        var val = inp.value.trim();
+        if(!val) return;
+        addLog('user', val);
+        inp.value = "";
 
-        addLog('user', text);
-        input.value = "";
-
-        setTimeout(() => {
-            let reply = "";
-            const isDanger = text.match(/怖い|ストーカー|事件|警察|現場|一人暮らし/);
-
-            // 【各キャラ独自の意見・ロジック】
-            if (selectedPet.mode === "logic") {
-                reply = `分析したよ。「${text}」という事態、感情で動くのは損だ。今すぐ物理的な防衛（戸締まり、録音）を固めなさい。それがボクの意見だ。`;
-            } else if (selectedPet.mode === "hot") {
-                reply = `「${text}」だと？ふざけるな！君の平穏を乱す奴を、ボクは絶対に許さない。まずは深呼吸して、戦う意志を持て！`;
-            } else if (selectedPet.mode === "shield") {
-                reply = `大丈夫。ボクが君の盾になる。一人暮らしの不安も、この${selectedPet.n}が全部弾き飛ばしてやるから、安心していいよ。`;
-            } else {
-                reply = `「${text}」…辛かったね。でも、その震えは君が一生懸命生きている証拠だ。ボクは君の味方として、今の言葉を絶対に忘れないよ。`;
-            }
-
-            reply += ` ……このボクの考え、君はどう思う？`;
-            addLog('pet', reply);
-        }, 1000);
+        setTimeout(function() {
+            var res = "";
+            if(currentPet.m === "logic") res = "「"+val+"」という事態。ボクの意見は、感情を殺して物理的な防衛（証拠確保・施錠）を最優先しろ、だ。";
+            else if(currentPet.m === "hot") res = "「"+val+"」だと！ふざけるな。君を怯えさせる奴をボクは絶対に許さない。戦う意志を持て！";
+            else res = "「"+val+"」…辛かったね。ボクは君の味方だ。一人で抱え込まず、ボクに全部預けて。";
+            
+            res += " このボクの意見、君はどう思う？";
+            addLog('pet', res);
+        }, 800);
     }
 </script>
-
 </body>
 </html>
