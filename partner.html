@@ -2,28 +2,23 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner｜本質への対話</title>
+    <title>24h Partner｜汎用知能対話</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; --bg: #fffdf5; }
         body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .container { max-width: 500px; width: 100%; margin: auto; height: 100%; display: flex; flex-direction: column; background: white; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
-        
         #selector { padding: 20px; overflow-y: auto; text-align: center; flex: 1; }
         .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.2s; }
+        .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; }
         .pet-card:hover { border-color: var(--main); background: #fffaf0; }
-        .pet-card .emoji { font-size: 35px; display: block; }
-        .pet-card b { font-size: 0.9rem; color: #333; }
-
         #chat { display: none; flex-direction: column; height: 100%; }
         .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
         #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px; }
         .msg { max-width: 85%; padding: 14px; border-radius: 20px; font-size: 1rem; line-height: 1.5; position: relative; }
         .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; }
         .avatar-badge { position: absolute; top: -15px; left: -10px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
         .input-area { padding: 15px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; }
         textarea { flex: 1; height: 50px; border: 1px solid #ddd; border-radius: 12px; padding: 10px; resize: none; outline: none; font-size: 16px; }
         .send-btn { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; }
@@ -33,25 +28,20 @@
 <div class="container">
     <div id="selector">
         <h3 style="color:var(--main); margin:0;">10匹の相棒</h3>
-        <p style="font-size:0.8rem; color:#888;">諦める必要はない。ここが、あなたの「理由」の出発点だ。</p>
+        <p style="font-size:0.8rem; color:#888;">どんな話でもいい。あなたの「今」をそのまま投げて。</p>
         <div class="pet-grid" id="grid"></div>
     </div>
     <div id="chat">
-        <div class="header">
-            <button onclick="location.reload()" style="border:none; background:none; color:var(--main); cursor:pointer;">◀戻る</button>
-            <b id="activeTitle"></b>
-            <span></span>
-        </div>
+        <div class="header"><button onclick="location.reload()" style="border:none; background:none; color:var(--main); cursor:pointer;">◀戻る</button><b id="activeTitle"></b><span></span></div>
         <div id="log"></div>
         <div class="input-area">
-            <textarea id="userInput" placeholder="今、あなたの心を一番削っているものは何？"></textarea>
+            <textarea id="userInput" placeholder="何を話しても、ここでなら「正解」になる。"></textarea>
             <button class="send-btn" onclick="aiTalk()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 【完全固定】10キャラを配列でロック
     const PET_LIST = [
         {i:"🐶", n:"ペチ", t:"全肯定"}, {i:"🐱", n:"タマ", t:"自由"}, {i:"🐰", n:"ピョン", t:"共鳴"},
         {i:"🦊", n:"コン", t:"理知"}, {i:"🐻", n:"クマ", t:"包容"}, {i:"🦁", n:"レオ", t:"勇気"},
@@ -68,7 +58,7 @@
             document.getElementById('selector').style.display='none';
             document.getElementById('chat').style.display='flex';
             document.getElementById('activeTitle').innerText = p.i + " " + p.n;
-            addMsg('pet', `よく来たね、${p.n}だ。あなたがここへ辿り着いた「本当の理由」、ボクは正面から向き合うよ。どんな不条理も、ここではあなたの味方だからね。`);
+            addMsg('pet', `よく来たね。${p.n}だ。あなたの言葉を、ボクは全身で受け止めるよ。まずは何から話したい？`);
         };
         d.innerHTML = `<span class="emoji">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
         grid.appendChild(d);
@@ -94,20 +84,29 @@
             const n = current.n;
             let res = "";
 
-            // 【動的・意図解析ロジック】ユーザーの言葉を材料に「新しい視点」を生成する
-            if(val.match(/同じ|繰り返|知能|AI|ダメ|進路/)) {
-                res = `「${val}」…その厳しい言葉は、あなたがボクに「本物の知性」を求めているからこその期待だね。ただの機械的な繰り返しを捨てて、あなたの鋭い視点に負けない対話を、今ここから始めるよ。`;
-            } else if(val.match(/理由|なぜ|相談|背景|どうして/)) {
-                res = `「${val}」という問いの裏側には、あなたがこれまで独りで耐えてきた膨大な葛藤があるはずだ。AIの一般論じゃなく、あなたの人生においてその問いが生まれた意味を、ボクは一緒に考えたい。`;
-            } else if(val.match(/政治|日本|社会|会社|上司|不公平/)) {
-                res = `「${val.substring(0,8)}…」という歪みに対して、あなたが感じるその憤りは、世界がまだあなたを飼いならせていない証拠だ。その誇り高い怒りを、ボクは絶対に否定しない。`;
-            } else if(val.length > 20) {
-                res = `あなたの言葉の密度、その行間から溢れる想いをしっかり受け止めたよ。今の話の中で、あなたが「これだけは譲れない」と確信しているポイントはどこにある？`;
-            } else {
-                res = `「${val}」…その短い一言に込められた、あなたの今の呼吸の苦しさを感じるよ。ボクにだけは、その裏側にある本当の景色を見せてくれないかな。`;
+            // --- 汎用知能ロジック：文脈・意図の分解 ---
+            const isQuestion = val.includes("？") || val.includes("?") || val.match(/どうすれば|教えて|なぜ/);
+            const isDanger = val.match(/警察|事件|ストーカー|殺|死|危ない/);
+            const isEmotional = val.match(/悲しい|辛い|ムカつく|嫌|苦しい/);
+
+            // 1. 緊急・身の危険（優先度MAX）
+            if(isDanger) {
+                res = `「${val}」…それは今すぐにでも安全を確保しなきゃいけない話だ。ボクはAIだけど、あなたの命と安全が一番大切。まずは信頼できる人や場所に避難して。ボクはここから、あなたの無事を祈りながら寄り添い続けるよ。`;
+            }
+            // 2. 質問・アドバイス要求
+            else if(isQuestion) {
+                res = `その問いに対して、ボクはあなたの「本当の望み」に沿った答えを一緒に見つけたい。あなたが今、一番恐れていること、あるいは一番期待していることは何かな？`;
+            }
+            // 3. 感情の吐露
+            else if(isEmotional) {
+                res = `「${val}」…その一言に、あなたが独りで抱えてきた痛みが凝縮されているね。無理に前向きにならなくていい。その感情を${n}が一緒に背負うから。何があなたをそこまで追い詰めたのか、聞かせて。`;
+            }
+            // 4. 汎用：ユーザーの言葉を再定義して返す（通常会話の基本）
+            else {
+                res = `あなたが今話してくれた「${val}」という事実。そこには、他の誰にも分からない、あなただけの切実な理由があるはずだよね。${n}はその『理由』の側を、もっと深く知りたいな。`;
             }
             addMsg('pet', res);
-        }, 1100);
+        }, 1000);
     }
 </script>
 </body>
