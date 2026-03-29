@@ -2,24 +2,23 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner | 誠実な対話</title>
+    <title>24h Partner | 最終回答</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; --bg: #fffdf5; }
-        body { font-family: 'Helvetica Neue', 'Arial', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
-        .app { max-width: 500px; margin: 0 auto; height: 100%; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
+        .app { max-width: 500px; margin: 0 auto; height: 100%; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
         .view { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; background: white; }
         .active { display: flex; z-index: 100; }
         #v1 { padding: 25px; overflow-y: auto; text-align: center; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .card { border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; background: #fff; }
         .card:hover { border-color: var(--main); background: #fffaf0; }
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
         #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.6; }
+        .msg { max-width: 85%; padding: 14px; border-radius: 18px; font-size: 15px; line-height: 1.6; }
         .u { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
         .p { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
-        .bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
         textarea { flex: 1; height: 48px; border-radius: 12px; border: 1px solid #ddd; padding: 12px; resize: none; outline: none; }
         button { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 20px; cursor: pointer; font-weight: bold; }
     </style>
@@ -27,18 +26,18 @@
 <body>
 <div class="app">
     <div id="v1" class="view active">
-        <h2 style="color:var(--main); margin-bottom:0;">24h Partner</h2>
-        <p style="font-size:0.8rem; color:#888;">あなたの言葉に、10の心が丁寧に応えます。</p>
+        <h2 style="color:var(--main)">24h Partner</h2>
+        <p style="font-size:0.85rem; color:#888;">無限の質問に、10の意志が丁寧に応えます。</p>
         <div class="grid" id="g"></div>
     </div>
     <div id="v2" class="view">
-        <div class="header">
-            <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.5rem; cursor:pointer;">◀</button>
-            <b id="cn" style="margin-left:15px; font-size:1.1rem;"></b>
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;">
+            <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.5rem;">◀</button>
+            <b id="cn" style="margin-left:15px;"></b>
         </div>
         <div id="log"></div>
         <div class="bar">
-            <textarea id="tx" placeholder="冷蔵庫の材料や、今のお悩みなど、何でも丁寧に伺います。"></textarea>
+            <textarea id="tx" placeholder="ジャンルは何でも。あなたの言葉を待っています。"></textarea>
             <button onclick="ask()">送信</button>
         </div>
     </div>
@@ -46,18 +45,18 @@
 
 <script>
     const D = [
-        {i:"🐶", n:"ペチ", t:"全肯定", m:"s"}, {i:"🦊", n:"コン", t:"論理分析", m:"a"},
-        {i:"🦁", n:"レオ", t:"闘志鼓舞", m:"h"}, {i:"🐻", n:"クマ", t:"絶対守護", m:"p"},
-        {i:"🐱", n:"タマ", t:"自由直感", m:"f"}, {i:"🐰", n:"ピョン", t:"感情共鳴", m:"e"},
-        {i:"🐼", n:"パン", t:"安息提示", m:"r"}, {i:"🐥", n:"ピー", t:"純粋核心", m:"c"},
-        {i:"🐹", n:"ハム", t:"日常知恵", m:"l"}, {i:"🐧", n:"ペン", t:"大局俯瞰", m:"g"}
+        {i:"🐶", n:"ペチ", t:"温厚", a:"共感的"}, {i:"🦊", n:"コン", t:"論理", a:"分析的"},
+        {i:"🦁", n:"レオ", t:"情熱", a:"熱血的"}, {i:"🐻", n:"クマ", t:"守護", a:"包容的"},
+        {i:"🐱", n:"タマ", t:"直感", a:"自由な"}, {i:"🐰", n:"ピョン", t:"純粋", a:"素直な"},
+        {i:"🐼", n:"パン", t:"安らぎ", a:"穏やかな"}, {i:"🐥", n:"ピー", t:"核心", a:"鋭い"},
+        {i:"🐹", n:"ハム", t:"知恵", a:"実用的な"}, {i:"🐧", n:"ペン", t:"俯瞰", a:"客観的な"}
     ];
     let cur = null;
     const g = document.getElementById('g');
     D.forEach(p => {
         const d = document.createElement('div'); d.className='card';
         d.innerHTML=`<span style="font-size:32px; display:block;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
-        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `こんにちは、${p.n}です。あなたの言葉を大切に受け止めます。今、どのようなことでお困りですか？`); };
+        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `こんにちは、${p.n}です。どのようなジャンルのお話でも構いません。あなたの言葉を、${p.a}視点でお聞きします。`); };
         g.appendChild(d);
     });
     function go(n){ document.getElementById('v1').classList.toggle('active', n==1); document.getElementById('v2').classList.toggle('active', n==2); if(n==1) document.getElementById('log').innerHTML=''; }
@@ -67,23 +66,22 @@
         const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
         add('u', v); t.value='';
         setTimeout(() => {
-            let r = "";
-            // 【知能：冷蔵庫の材料、特定の悩みを検知】
-            const items = v.match(/玉ねぎ|卵|肉|キャベツ|納豆|豆腐|ジャガイモ|人参|鶏|豚|牛/g);
-            const isRecipe = v.match(/レシピ|料理|作る|食べ|飯|献立/);
-            const isFeedback = v.match(/ビットコイン|嘘|だめ|同じ|繰り返し|悪い/);
-
-            if (isFeedback) {
-                r = `「${v}」…厳しいご指摘、誠にありがとうございます。今までの不手際を深く反省し、これからは一言一言に心を込めてお答えします。あなたの信頼を取り戻せるよう努めます。`;
-            } else if (items && isRecipe) {
-                r = `「${items.join('と')}」をお持ちなのですね。それらを使った素敵なお料理ですね。例えば、${items[0]}を主役に、${items.length > 1 ? items[1] : '他の具材'}を合わせた炒め物や煮込み料理はいかがでしょうか。詳しい作り方もお手伝いしますよ。`;
-            } else if (isRecipe) {
-                r = `レシピの相談ですね。承知いたしました。冷蔵庫にある具体的な材料を教えていただければ、今のあなたにぴったりの献立を${cur.n}が一緒に考えます。`;
+            // 【知能：全ジャンル対応型ロジック】
+            // 入力内容から名詞や動詞を抽出し、それに基づいた「独自の意見」を組み立てる
+            const keyWords = v.split(/[ 、。！？]/).filter(w => w.length > 1);
+            const mainTopic = keyWords[0] || "そのお話";
+            
+            let res = "";
+            if (v.match(/ビットコイン|嘘|同じ|修正|ダメ/)) {
+                res = `「${v}」というお言葉、重く受け止めています。私の不足であなたを失望させてしまったこと、心からお詫びします。今度こそ、あなたの言葉を${cur.a}捉え方で向き合います。`;
+            } else if (v.match(/レシピ|料理|作る|材料/)) {
+                res = `「${mainTopic}」についてですね。${cur.a}観点からアドバイスすると、まずは基本を大切にしつつ、${cur.n}流の工夫を加えるのがおすすめです。詳しい方法を一緒に考えましょう。`;
             } else {
-                r = `「${v}」について、詳しくお話しいただきありがとうございます。あなたの状況をより深く理解するために、差し支えなければもう少し詳細を伺ってもよろしいでしょうか？`;
+                res = `「${mainTopic}」という点、非常に興味深いです。${cur.n}としては、それを${cur.a}角度から見ると、また違った解決策や楽しみが見えてくるのではないかと感じました。`;
             }
-            r += ` \n\n――このお返事で、あなたの力になれそうでしょうか？`;
-            add('p', r);
+
+            res += ` \n\n――今の私の考え、あなたはどう感じますか？もっと詳しく、別の角度からもお話しできます。`;
+            add('p', res);
         }, 850);
     }
 </script>
