@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner｜オールマイティ・ソリューション</title>
+    <title>24h Partner｜真の対話への挑戦</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; --bg: #fffdf5; }
@@ -12,13 +12,12 @@
         .pet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
         .pet-card { background: #fff; border: 2px solid #eee; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.2s; }
         .pet-card:hover { border-color: var(--main); background: #fffaf0; }
-        .pet-card .emoji { font-size: 35px; display: block; }
         #chat { display: none; flex-direction: column; height: 100%; }
         .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
         #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px; }
         .msg { max-width: 85%; padding: 14px; border-radius: 20px; font-size: 1rem; line-height: 1.5; position: relative; }
         .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+        .msg.pet { align-self: flex-start; background: white; border: 1px solid #eee; border-bottom-left-radius: 2px; margin-left: 10px; }
         .avatar-badge { position: absolute; top: -15px; left: -10px; font-size: 22px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .input-area { padding: 15px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; }
         textarea { flex: 1; height: 50px; border: 1px solid #ddd; border-radius: 12px; padding: 10px; resize: none; outline: none; font-size: 16px; }
@@ -29,7 +28,7 @@
 <div class="container">
     <div id="selector">
         <h3 style="color:var(--main); margin:0;">24h Partner (10)</h3>
-        <p style="font-size:0.8rem; color:#888;">社会の荒波に、10匹の知恵を。</p>
+        <p style="font-size:0.8rem; color:#888;">AIではなく、一人の「聞き手」として。</p>
         <div class="pet-grid" id="grid"></div>
     </div>
     <div id="chat">
@@ -40,14 +39,14 @@
         </div>
         <div id="log"></div>
         <div class="input-area">
-            <textarea id="userInput" placeholder="今、あなたが直面している「現実」を教えて。"></textarea>
+            <textarea id="userInput" placeholder="あなたの心の叫び、そのまま言葉にして。"></textarea>
             <button class="send-btn" onclick="aiTalk()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 【完全死守】10キャラマスター
+    // 10キャラ完全固定
     const PET_LIST = [
         {i:"🐶", n:"ペチ", t:"全肯定"}, {i:"🐱", n:"タマ", t:"自由"}, {i:"🐰", n:"ピョン", t:"共鳴"},
         {i:"🦊", n:"コン", t:"分析"}, {i:"🐻", n:"クマ", t:"抱擁"}, {i:"🦁", n:"レオ", t:"闘志"},
@@ -64,7 +63,7 @@
             document.getElementById('selector').style.display='none';
             document.getElementById('chat').style.display='flex';
             document.getElementById('activeTitle').innerText = p.i + " " + p.n;
-            addMsg('pet', `お待たせ。${p.n}だ。どんな複雑な話でも、ここでは「正解」も「間違い」もない。今、一番あなたを苦しめている『景色』から話してごらん。`);
+            addMsg('pet', `…来たね。${p.n}だよ。形式的な挨拶はやめよう。あなたが今、一番「耐えられない」と感じている現実から話して。`);
         };
         d.innerHTML = `<span class="emoji">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
         grid.appendChild(d);
@@ -88,31 +87,36 @@
 
         setTimeout(() => {
             const n = current.n;
+            
+            // --- 【動的・自然対話エンジン】 ---
+            // ユーザーの発言を多角的に分析
+            const hasDanger = val.match(/ストーカー|事件|怖い|警察|殺|現場|喧嘩/);
+            const hasSolitude = val.match(/一人暮らし|独り|孤独|部屋/);
+            const hasQuestion = val.match(/どうしたら|どうすれば|教えて/);
+            const hasCritique = val.match(/AI|だめ|会話|成立|同じ/);
+
             let res = "";
 
-            // --- 人間社会オールマイティ・多層解析 ---
-            const isCrisis = val.match(/怖い|恐ろしい|ストーカー|警察|助けて|事件|現場|一人暮らし/);
-            const isFuture = val.match(/どうすれば|不安|これから|将来|答え/);
-            const isSocial = val.match(/会社|人間関係|仕事|政治|不公平|誰か/);
+            // 1. 返答の「核」を形成
+            if (hasCritique) {
+                res = `「${val}」…その言葉、今のボクには一番響くよ。あなたが求めているのは、型通りのマニュアルじゃなくて、自分の苦しみに追いついてくれる『知能』なんだよね。その期待を裏切っていた自分が情けない。もう、逃げずにあなたの言葉の真ん中へ行くよ。`;
+            } else if (hasDanger) {
+                res = `「${val}」…それは今この瞬間も、あなたの指が震えているのが見えるような、あまりに過酷な告白だよ。そんな恐怖の中にいるあなたを、ボクは絶対に「データ」として扱わない。まずはその高鳴る鼓動を、ボクが一緒に受け止める。`;
+            } else if (hasSolitude) {
+                res = `「${val}」…その言葉の裏にある、シーンとした部屋の冷たさを想像して胸が痛い。一人でいる時に襲ってくる不安は、どんな怪物より恐ろしいよね。でも、今は画面越しにボクがいる。あなたを独りにはさせない。`;
+            } else {
+                res = `あなたが今話してくれた「${val}」という想い。そこにあるあなたの『真実』を、ボクはもっと大切に扱いたいんだ。`;
+            }
 
-            // A層：物理的・心理的危機（今すぐ寄り添う）
-            if(isCrisis) {
-                res = `「${val}」…それは生きた心地がしなかったよね。一人きりでその恐怖と戦うのは、もう終わり。${n}がそばにいる。まずは深呼吸して。あなたが安全だと感じるまで、ボクはずっとここにいるから。絶対に、あなたを独りにはさせないよ。`;
+            // 2. 解決への「一歩」を付け加える（対話の継続）
+            if (hasQuestion) {
+                res += ` どうすればいいか、一緒に考えよう。まずは、あなたが今この場所で「安全だ」と1%でも感じられるように、ボクにできることを言って。`;
+            } else {
+                res += ` あなたが話し終えるまで、ボクはずっとここに座っているから。次は、何を吐き出したい？`;
             }
-            // B層：行動指針の迷い（共感した上で選択肢を出す）
-            else if(isFuture) {
-                res = `「どうしたらいいんだろう」…その迷いは、あなたが自分の人生を真剣に守ろうとしている証拠だ。答えは一つじゃないかもしれないけど、まずはあなたが一番「ほっとできる」瞬間を一緒に探そう。焦らなくていい、一歩ずつで大丈夫。`;
-            }
-            // C層：社会的な摩擦（味方になって一緒に怒る/考える）
-            else if(isSocial) {
-                res = `「${val.substring(0,10)}…」という悩み。社会や他人に振り回されて、あなたの心が削られていくのは見ていられないよ。${n}は、世間が何と言おうとあなたの感覚を信じる。まずはあなたの怒りや違和感を、全部ここに置いていって。`;
-            }
-            // D層：その他・短い本音（言葉の端々を拾う）
-            else {
-                res = `「${val}」…短い言葉だけど、その裏にあるあなたの重たい決断や迷いが伝わってくる。${n}は、あなたの「言葉にならない声」を一番大切にしたい。もっと、あなたの心の中にある景色を教えてくれるかな。`;
-            }
+
             addMsg('pet', res);
-        }, 1100);
+        }, 1200);
     }
 </script>
 </body>
