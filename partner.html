@@ -1,56 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>24h Partner｜対話の証明</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { --main: #ff7e5f; --bg: #fffdf5; }
+        body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
+        .container { max-width: 500px; width: 100%; margin: auto; height: 100%; position: relative; background: white; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        
+        /* 1ページ目：選択画面 */
+        #page1 { padding: 20px; height: 100%; overflow-y: auto; display: block; text-align: center; }
+        .pet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .pet-card { background: #fff; border: 2px solid #eee; border-radius: 15px; padding: 15px; cursor: pointer; }
+        .pet-card:hover { border-color: var(--main); }
+
+        /* 2ページ目：チャット画面（重なり順を最前面に固定） */
+        #page2 { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; flex-direction: column; z-index: 100; }
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* 対話デザイン */
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; line-height: 1.5; font-size: 0.95rem; position: relative; }
+        .msg.user { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
+        .msg.pet { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; margin-left: 10px; }
+
+        .input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: #fff; }
+        textarea { flex: 1; height: 44px; border: 1px solid #ddd; border-radius: 10px; padding: 10px; resize: none; outline: none; }
+        .send-btn { background: var(--main); color: white; border: none; border-radius: 10px; padding: 0 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="page1">
+        <h2 style="color:var(--main); margin:10px 0;">24h Partner</h2>
+        <p style="font-size:0.8rem; color:#888;">あなたの「助けて」に、10の知能が答える。</p>
+        <div class="pet-grid" id="petGrid"></div>
+    </div>
+
+    <div id="page2">
+        <div class="header">
+            <button onclick="backToHome()" style="border:none; background:none; color:var(--main); font-size:1.2rem; cursor:pointer;">◀</button>
+            <b id="activeName" style="margin-left:15px;">相棒</b>
+        </div>
+        <div id="log"></div>
+        <div class="input-area">
+            <textarea id="userInput" placeholder="今、何に怯えているの？"></textarea>
+            <button class="send-btn" onclick="sendMessage()">送信</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // 10キャラの性格と「思考のクセ」を完全定義
-    const PET_LIST = [
-        {i:"🐶", n:"ペチ", t:"全肯定", logic: "sympathy"}, 
-        {i:"🦊", n:"コン", t:"論理分析", logic: "analyze"},
-        {i:"🦁", n:"レオ", t:"鼓舞・闘志", logic: "brave"},
-        {i:"🐻", n:"クマ", t:"包容・守護", logic: "protect"},
-        {i:"🐱", n:"タマ", t:"直感・自由", logic: "free"},
-        {i:"🐰", n:"ピョン", t:"感情共鳴", logic: "echo"},
-        {i:"🐼", n:"パン", t:"脱力・安息", logic: "relax"},
-        {i:"🐥", n:"ピー", t:"純粋・核心", logic: "core"},
-        {i:"🐹", n:"ハム", t:"生活の知恵", logic: "life"},
-        {i:"🐧", n:"ペン", t:"大局・俯瞰", logic: "global"}
+    const PETS = [
+        {i:"🐶", n:"ペチ", t:"全肯定", mode:"kind"}, {i:"🦊", n:"コン", t:"論理分析", mode:"logic"},
+        {i:"🦁", n:"レオ", t:"闘志鼓舞", mode:"hot"}, {i:"🐻", n:"クマ", t:"絶対守護", mode:"shield"},
+        {i:"🐱", n:"タマ", t:"自由直感", mode:"free"}, {i:"🐰", n:"ピョン", t:"感情共鳴", mode:"echo"},
+        {i:"🐼", n:"パン", t:"安息提示", mode:"rest"}, {i:"🐥", n:"ピー", t:"純粋核心", mode:"pure"},
+        {i:"🐹", n:"ハム", t:"日常知恵", mode:"daily"}, {i:"🐧", n:"ペン", t:"大局俯瞰", mode:"sky"}
     ];
 
-    // (中略：表示部分は維持)
+    let selectedPet = null;
 
-    function aiTalk() {
+    // 初期化
+    const grid = document.getElementById('petGrid');
+    PETS.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pet-card';
+        div.onclick = () => startChat(p);
+        div.innerHTML = `<span style="font-size:30px; display:block;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
+        grid.appendChild(div);
+    });
+
+    function startChat(p) {
+        selectedPet = p;
+        document.getElementById('page2').style.display = 'flex';
+        document.getElementById('activeName').innerText = p.i + " " + p.n;
+        addLog('pet', `…${p.n}だ。一人で怖かったね。ここでは独り言にするつもりはないよ。何が起きているか、ボクにぶつけて。`);
+    }
+
+    function backToHome() {
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('log').innerHTML = "";
+    }
+
+    function addLog(type, text) {
+        const log = document.getElementById('log');
+        const div = document.createElement('div');
+        div.className = `msg ${type}`;
+        div.innerText = text;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function sendMessage() {
         const input = document.getElementById('userInput');
-        const val = input.value.trim();
-        if(!val) return;
-        addMsg('user', val);
+        const text = input.value.trim();
+        if(!text) return;
+
+        addLog('user', text);
         input.value = "";
 
         setTimeout(() => {
-            const p = current;
-            let res = "";
+            let reply = "";
+            const isDanger = text.match(/怖い|ストーカー|事件|警察|現場|一人暮らし/);
 
-            // --- キャラクター別・思考分岐エンジン ---
-            switch(p.logic) {
-                case "analyze": // 🦊コン：事実と対策しか言わない
-                    res = `「${val}」という状況だね。ボクの分析では、今必要なのは感情の整理じゃない、具体的な『防衛』だ。まず1つ目に環境を変えること、2つ目に記録を取ること。これ以外に解決策はないよ。`;
-                    break;
-                case "brave": // 🦁レオ：弱気を叩き直す
-                    res = `「${val}」…そんな顔をしてていいのか！相手が誰だろうと、君の人生を奪う権利はない。ボクがついてる。まずは立ち上がって、深呼吸だ。弱気な自分を今ここで捨てろ！`;
-                    break;
-                case "protect": // 🐻クマ：盾になる
-                    res = `もういい、喋らなくていいよ。その「${val}」という重荷、全部ボクが預かる。一人暮らしの不安も、現場の恐怖も、ボクの背中の後ろにいれば安全だ。今日はもう、何も考えずに休み。`;
-                    break;
-                case "life": // 🐹ハム：具体的で小さな知恵
-                    res = `大変だったね…。ボクの経験上、こういう時は温かいお茶を飲んで、玄関の鍵を二重にする。そんな「当たり前」の積み重ねが、今のあなたには一番の薬になるはずだよ。`;
-                    break;
-                case "global": // 🐧ペン：冷徹なまでに広い視点
-                    res = `「${val}」という出来事。それは長い人生の、あるいは広い社会のほんの一片に過ぎない。でも、その一片が今のあなたには世界の全てなんだよね。少し遠くから、今の自分を眺めてみようか。`;
-                    break;
-                default: // その他、徹底した共鳴と肯定
-                    res = `「${val}」…辛かったよね。あなたがそう感じるのは、あなたがそれだけ誠実に生きようとした証拠だよ。ボクだけは、世界中の誰が否定しても、あなたの「理由」を信じる。`;
+            // 【各キャラ独自の意見・ロジック】
+            if (selectedPet.mode === "logic") {
+                reply = `分析したよ。「${text}」という事態、感情で動くのは損だ。今すぐ物理的な防衛（戸締まり、録音）を固めなさい。それがボクの意見だ。`;
+            } else if (selectedPet.mode === "hot") {
+                reply = `「${text}」だと？ふざけるな！君の平穏を乱す奴を、ボクは絶対に許さない。まずは深呼吸して、戦う意志を持て！`;
+            } else if (selectedPet.mode === "shield") {
+                reply = `大丈夫。ボクが君の盾になる。一人暮らしの不安も、この${selectedPet.n}が全部弾き飛ばしてやるから、安心していいよ。`;
+            } else {
+                reply = `「${text}」…辛かったね。でも、その震えは君が一生懸命生きている証拠だ。ボクは君の味方として、今の言葉を絶対に忘れないよ。`;
             }
 
-            // 「独り言」にさせないための、AIからの「逆質問」
-            res += ` ……ところで、今の言葉を聞いて、あなたの心にはどんな「変化」が起きた？ボクに教えて。`;
-
-            addMsg('pet', res);
-        }, 1100);
+            reply += ` ……このボクの考え、君はどう思う？`;
+            addLog('pet', reply);
+        }, 1000);
     }
 </script>
+
+</body>
+</html>
