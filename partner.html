@@ -2,81 +2,77 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner | 対話の実装</title>
+    <title>24h Partner | 意志の証明</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; }
-        body { font-family: sans-serif; margin: 0; background: #fffdf5; overflow: hidden; }
-        .container { max-width: 500px; margin: 0 auto; height: 100vh; background: white; position: relative; }
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
-        #p1 { display: flex; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; box-sizing: border-box; }
-        #p2 { display: none; z-index: 10; background: #fff; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .card { border: 2px solid #eee; border-radius: 15px; padding: 15px; cursor: pointer; text-align: center; }
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
-        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 14px; }
-        .user { align-self: flex-end; background: var(--main); color: white; }
-        .pet { align-self: flex-start; background: #eee; }
-        .input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 5px; }
-        textarea { flex: 1; height: 40px; border-radius: 5px; border: 1px solid #ddd; }
-        button { background: var(--main); color: white; border: none; padding: 0 15px; border-radius: 5px; cursor: pointer; }
+        body { font-family: sans-serif; background: #fffdf5; margin: 0; overflow: hidden; }
+        .app { max-width: 500px; margin: 0 auto; height: 100vh; background: white; position: relative; display: flex; flex-direction: column; }
+        .view { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; background: white; }
+        .active { display: flex; z-index: 10; }
+        #list { padding: 20px; overflow-y: auto; text-align: center; display: flex; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 20px; }
+        .card { border: 2px solid #eee; border-radius: 20px; padding: 20px; cursor: pointer; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 15px; }
+        .u { align-self: flex-end; background: var(--main); color: white; }
+        .p { align-self: flex-start; background: #fff; border: 1px solid #ddd; }
+        .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 50px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div id="p1" class="page" style="display:flex;">
-        <h2 style="color:var(--main);">24h Partner</h2>
+<div class="app">
+    <div id="v1" class="view active">
+        <h2 style="color:var(--main)">24h Partner</h2>
+        <p>「広辞苑」ではない、10の「意志」を選べ。</p>
         <div class="grid" id="g"></div>
     </div>
-    <div id="p2" class="page">
-        <div class="header"><button onclick="home()">◀戻る</button><b id="n" style="margin-left:20px;"></b></div>
-        <div id="log"></div>
-        <div class="input-area">
-            <textarea id="in"></textarea>
-            <button onclick="talk()">相談</button>
+    <div id="v2" class="view">
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;">
+            <button onclick="go(1)" style="border:none; background:none; color:var(--main); cursor:pointer;">◀</button>
+            <b id="cur-n" style="margin-left:20px;"></b>
+        </div>
+        <div id="chat-log"></div>
+        <div class="input-bar">
+            <textarea id="tx" placeholder="あなたの『叫び』をここに。"></textarea>
+            <button onclick="ask()" style="background:var(--main); color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">相談</button>
         </div>
     </div>
 </div>
 <script>
-    var D = [
-        {i:"🐶", n:"ペチ", m:"s"}, {i:"🦊", n:"コン", m:"a"}, {i:"🦁", n:"レオ", m:"h"},
-        {i:"🐻", n:"クマ", m:"p"}, {i:"🐱", n:"タマ", m:"f"}, {i:"🐰", n:"ピョン", m:"e"},
-        {i:"🐼", n:"パン", m:"r"}, {i:"🐥", n:"ピー", m:"c"}, {i:"🐹", n:"ハム", m:"l"}, {i:"🐧", n:"ペン", m:"g"}
+    const D = [
+        {i:"🐶", n:"ペチ", m:"kind"}, {i:"🦊", n:"コン", m:"logic"},
+        {i:"🦁", n:"レオ", m:"hot"}, {i:"🐻", n:"クマ", m:"shield"},
+        {i:"🐱", n:"タマ", m:"free"}, {i:"🐰", n:"ピョン", m:"echo"},
+        {i:"🐼", n:"パン", m:"rest"}, {i:"🐥", n:"ピー", m:"pure"},
+        {i:"🐹", n:"ハム", m:"life"}, {i:"🐧", n:"ペン", m:"sky"}
     ];
-    var cur = null;
-    var g = document.getElementById('g');
-    D.forEach(function(p){
-        var d = document.createElement('div');
+    let cur = null;
+    const g = document.getElementById('g');
+    D.forEach(p => {
+        const d = document.createElement('div');
         d.className='card';
-        d.innerHTML='<span style="font-size:24px;">'+p.i+'</span><br><b>'+p.n+'</b>';
-        d.onclick=function(){
-            cur=p;
-            document.getElementById('p1').style.display='none';
-            document.getElementById('p2').style.display='flex';
-            document.getElementById('n').innerText=p.i+' '+p.n;
-            add('pet', p.n+'だ。君を独り言にはさせない。今の現実をぶつけてくれ。');
-        };
+        d.innerHTML=`<span style="font-size:30px">${p.i}</span><br><b>${p.n}</b>`;
+        d.onclick=()=>{ cur=p; go(2); document.getElementById('cur-n').innerText=p.i+' '+p.n; add('p', p.n+'だ。あなたの「独り言」をここで終わらせに来た。何が起きてる？'); };
         g.appendChild(d);
     });
-    function home(){ document.getElementById('p1').style.display='flex'; document.getElementById('p2').style.display='none'; document.getElementById('log').innerHTML=''; }
-    function add(t, s){
-        var l=document.getElementById('log');
-        var m=document.createElement('div');
-        m.className='msg '+t; m.innerText=s;
-        l.appendChild(m); l.scrollTop=l.scrollHeight;
-    }
-    function talk(){
-        var i=document.getElementById('in'); var v=i.value.trim(); if(!v)return;
-        add('user', v); i.value='';
-        setTimeout(function(){
-            var r = "";
-            if(cur.m === "a") r = "「"+v+"」という状況。僕の意見は『感情を捨てて物理的な証拠を固めろ』だ。警察を動かすにはそれしかない。";
-            else if(cur.m === "h") r = "「"+v+"」だと？許せるか！君の人生を邪魔する奴には、全力で立ち向かう意志を持て。僕が盾になる！";
-            else r = "「"+v+ "」…辛かったね。僕の意見は『今は逃げていい』だ。君の安全以上に優先すべきことなんてない。";
-            r += " ――僕のこの意見、君はどう思う？";
-            add('pet', r);
-        }, 700);
+    function go(n){ document.getElementById('v1').className='view '+(n==1?'active':''); document.getElementById('v2').className='view '+(n==2?'active':''); if(n==1)document.getElementById('chat-log').innerHTML=''; }
+    function add(c, s){ const l=document.getElementById('chat-log'); const m=document.createElement('div'); m.className='bubble '+c; m.innerText=s; l.appendChild(m); l.scrollTop=l.scrollHeight; }
+    function ask(){
+        const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
+        add('u', v); t.value='';
+        setTimeout(() => {
+            let r = "";
+            const isCritical = v.length > 15 || v.match(/怖い|ストーカー|事件|警察/);
+            // AIとしての「踏み込んだ意見」の生成
+            if(cur.m === "logic") r = `分析した。君の「${v}」という言葉。今必要なのは安心感じゃない、物理的な『遮断』だ。今すぐ証拠をまとめ、第三者に介入させろ。それが僕の冷徹な結論だ。`;
+            else if(cur.m === "hot") r = `「${v}」だと！？ふざけるな！そんな恐怖に負けてていいのか！僕が君の怒りに火をつけてやる。戦う意志を捨ててないなら、僕が盾になってやる。`;
+            else if(cur.m === "kind") r = `「${v}」…辛かったね。でも僕は君を甘やかさない。その不安を抱えたまま、一歩だけ外に出る勇気を持てるか？僕と一緒に考えよう。`;
+            else r = `君の「${v}」という声。僕はそれを単なるデータとは見ない。一人の人間の叫びとして、真っ向から僕の『意見』を返すよ。`;
+            r += " ――今の僕の言葉を聴いて、君の心はどう動いた？";
+            add('p', r);
+        }, 800);
     }
 </script>
 </body>
