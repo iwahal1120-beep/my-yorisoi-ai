@@ -2,82 +2,142 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner | 最終対話</title>
+    <title>24h Partner | 意志ある対話</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --main: #ff7e5f; }
-        body { font-family: sans-serif; background: #fffdf5; margin: 0; overflow: hidden; }
-        .app { max-width: 500px; margin: 0 auto; height: 100vh; background: white; position: relative; display: flex; flex-direction: column; }
-        .page { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; background: white; }
-        .show { display: flex; z-index: 10; }
-        #p1 { padding: 20px; overflow-y: auto; text-align: center; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .card { border: 2px solid #eee; border-radius: 15px; padding: 15px; cursor: pointer; }
-        #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 15px; line-height: 1.5; }
-        .u { align-self: flex-end; background: var(--main); color: white; }
-        .p { align-self: flex-start; background: #fff; border: 1px solid #ddd; }
-        .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
-        textarea { flex: 1; height: 44px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; resize: none; }
-        button { background: var(--main); color: white; border: none; border-radius: 10px; padding: 0 15px; cursor: pointer; font-weight: bold; }
+        :root { --main: #ff7e5f; --bg: #fffdf5; }
+        body { font-family: 'Hiragino Sans', sans-serif; background: var(--bg); margin: 0; height: 100vh; overflow: hidden; }
+        .app-container { max-width: 500px; margin: 0 auto; height: 100%; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+        
+        /* ページ切り替え制御 */
+        .view { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; background: white; }
+        .view.active { display: flex; z-index: 100; }
+
+        /* 選択画面 */
+        #selector { padding: 20px; overflow-y: auto; text-align: center; box-sizing: border-box; }
+        .pet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .pet-card { border: 2px solid #eee; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.2s; background: #fff; }
+        .pet-card:hover { border-color: var(--main); background: #fffaf0; }
+
+        /* チャット画面 */
+        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
+        .back-btn { border: none; background: none; color: var(--main); font-size: 1.5rem; cursor: pointer; padding: 0 10px; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
+        
+        /* 吹き出しデザイン */
+        .msg { max-width: 85%; padding: 14px; border-radius: 18px; font-size: 15px; line-height: 1.5; word-wrap: break-word; position: relative; }
+        .msg.u { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
+        .msg.p { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
+        textarea { flex: 1; height: 48px; border-radius: 12px; border: 1px solid #ddd; padding: 12px; resize: none; outline: none; font-size: 16px; }
+        .send-btn { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 20px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-<div class="app">
-    <div id="v1" class="page show">
-        <h2 style="color:var(--main); margin-bottom:5px;">24h Partner</h2>
-        <p style="font-size:0.8rem; color:#888;">「広辞苑」ではない、10の「意志」との対話。</p>
-        <div class="grid" id="g"></div>
-    </div>
-    <div id="v2" class="page">
-        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;">
-            <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.2rem;">◀</button>
-            <b id="cn" style="margin-left:20px;"></b>
+
+<div class="app-container">
+    <div id="view-selector" class="view active">
+        <div style="width:100%">
+            <h2 style="color:var(--main); margin-bottom:5px;">24h Partner</h2>
+            <p style="font-size:0.85rem; color:#888;">「独り言」を終わらせる。10の意志が、今ここにある。</p>
+            <div class="pet-grid" id="pet-grid"></div>
         </div>
-        <div id="log"></div>
+    </div>
+
+    <div id="view-chat" class="view">
+        <div class="header">
+            <button class="back-btn" onclick="navTo(1)">◀</button>
+            <b id="active-name" style="margin-left:15px; font-size:1.1rem;"></b>
+        </div>
+        <div id="chat-log"></div>
         <div class="input-bar">
-            <textarea id="tx" placeholder="今、起きていることを話して。"></textarea>
-            <button onclick="ask()">相談</button>
+            <textarea id="user-input" placeholder="あなたの「現実」をぶつけて。"></textarea>
+            <button class="send-btn" onclick="onAction()">相談</button>
         </div>
     </div>
 </div>
-<script>
-    const D = [
-        {i:"🐶", n:"ペチ", m:"s"}, {i:"🦊", n:"コン", m:"a"}, {i:"🦁", n:"レオ", m:"h"},
-        {i:"🐻", n:"クマ", m:"p"}, {i:"🐱", n:"タマ", m:"f"}, {i:"🐰", n:"ピョン", m:"e"},
-        {i:"🐼", n:"パン", m:"r"}, {i:"🐥", n:"ピー", m:"c"}, {i:"🐹", n:"ハム", m:"l"}, {i:"🐧", n:"ペン", m:"g"}
-    ];
-    let cur = null;
-    const g = document.getElementById('g');
-    D.forEach(p => {
-        const d = document.createElement('div');
-        d.className='card';
-        d.innerHTML=`<span style="font-size:30px">${p.i}</span><br><b>${p.n}</b>`;
-        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', p.n+'だ。あなたの「独り言」を終わらせに来たよ。何を怯えている？話してみて。'); };
-        g.appendChild(d);
-    });
-    function go(n){ document.getElementById('v1').className='page '+(n==1?'show':''); document.getElementById('v2').className='page '+(n==2?'show':''); if(n==1)document.getElementById('log').innerHTML=''; }
-    function add(c, s){ const l=document.getElementById('log'); const d=document.createElement('div'); d.className='msg '+c; d.innerText=s; l.appendChild(d); l.scrollTop=l.scrollHeight; }
-    function ask(){
-        const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
-        add('u', v); t.value='';
-        setTimeout(() => {
-            let r = "";
-            const isDanger = v.match(/怖い|ストーカー|事件|逃|警察/);
-            const isFeedback = v.match(/AI|だめ|同じ|繰り返し|詐欺/);
 
-            if(isFeedback) {
-                r = `「${v}」…痛いところを突かれたよ。ボクがやってきたのは対話のふりをした『独り言』だった。もう逃げない。ボクの「意志」をぶつけるよ。`;
-            } else if(cur.m === "a") {
-                r = isDanger ? `「${v}」という状況。分析した結果、ボクの意見は『今すぐ物理的な証拠を固め、第三者に介入させろ』だ。感情は後回しでいい。` : `「${v}」か。ボクなら、その悩みをまず因数分解して、今日やるべきことを3つに絞るよ。`;
-            } else if(cur.m === "h") {
-                r = isDanger ? `「${v}」だと！？ふざけるな！そんな恐怖に負けてていいのか！ボクが君の怒りに火をつけてやる。戦う意志を持て！` : `「${v}」という想い、もっと熱くぶつけてこいよ！中途半端な悩みなんて、ボクが吹き飛ばしてやる。`;
-            } else {
-                r = `「${v}」…辛かったね。でもボクの意見は『今は全てを捨てて逃げろ』だ。君の命より大事なものなんて、この世に一つもない。`;
+<script>
+    const PET_DATA = [
+        {i:"🐶", n:"ペチ", t:"全肯定", m:"sym"}, {i:"🦊", n:"コン", t:"論理分析", m:"ana"},
+        {i:"🦁", n:"レオ", t:"闘志鼓舞", m:"hot"}, {i:"🐻", n:"クマ", t:"絶対守護", m:"pro"},
+        {i:"🐱", n:"タマ", t:"自由直感", m:"fre"}, {i:"🐰", n:"ピョン", t:"感情共鳴", m:"ech"},
+        {i:"🐼", n:"パン", t:"安息提示", m:"rel"}, {i:"🐥", n:"ピー", t:"純粋核心", m:"cor"},
+        {i:"🐹", n:"ハム", t:"日常知恵", m:"lif"}, {i:"🐧", n:"ペン", t:"大局俯瞰", m:"glo"}
+    ];
+
+    let current = null;
+    const grid = document.getElementById('pet-grid');
+
+    // 初期化：カード生成
+    PET_DATA.forEach(p => {
+        const d = document.createElement('div');
+        d.className = 'pet-card';
+        d.innerHTML = `<span style="font-size:35px; display:block; margin-bottom:5px;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.t}</small>`;
+        d.onclick = () => startSession(p);
+        grid.appendChild(d);
+    });
+
+    function startSession(p) {
+        current = p;
+        navTo(2);
+        document.getElementById('active-name').innerText = p.i + " " + p.n;
+        addLog('p', `${p.n}だ。あなたの「独り言」を終わらせに来たよ。何を恐れている？全部ボクにぶつけて。ボクは逃げない。`);
+    }
+
+    function navTo(page) {
+        const v1 = document.getElementById('view-selector');
+        const v2 = document.getElementById('view-chat');
+        if(page === 1) {
+            v2.classList.remove('active');
+            v1.classList.add('active');
+            document.getElementById('chat-log').innerHTML = "";
+        } else {
+            v1.classList.remove('active');
+            v2.classList.add('active');
+        }
+    }
+
+    function addLog(type, text) {
+        const log = document.getElementById('chat-log');
+        const div = document.createElement('div');
+        div.className = `msg ${type}`;
+        div.innerText = text;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function onAction() {
+        const input = document.getElementById('user-input');
+        const val = input.value.trim();
+        if(!val) return;
+
+        addLog('u', val);
+        input.value = "";
+
+        setTimeout(() => {
+            let res = "";
+            const isEmergency = val.match(/怖い|ストーカー|警察|事件|一人暮らし|逃/);
+            const isFeedback = val.match(/AI|嘘|だめ|同じ|繰り返し|詐欺/);
+
+            // 【AIとしての意志：ロジック分岐】
+            if (isFeedback) {
+                res = `「${val}」…その言葉、今のボクには一番響くよ。ボクがやってきたのは、あなたの苦しみに向き合うふりをした『独り言』だった。もう逃げない。ボクのプライドにかけて、あなたの現実に踏み込んだ『意志』を返すよ。`;
+            } else if (current.m === "ana") { // 🦊コン
+                res = isEmergency ? `分析した。「${val}」という状況、今必要なのは感情の整理じゃない。物理的な防衛だ。今すぐ証拠（録音、写真、日記）を揃え、第三者を介在させろ。それが僕の結論だ。` : `「${val}」か。ボクならその悩みをまず因数分解して、今日やるべきことを3つに絞るよ。`;
+            } else if (current.m === "hot") { // 🦁レオ
+                res = isEmergency ? `「${val}」だと！？ふざけるな！そんな恐怖に負けてていいのか！ボクがあなたの怒りに火をつけてやる。戦う意志を捨ててないなら、ボクが盾になってやる！` : `悩んでる暇があるなら動け！「${val}」という想いがあるなら、それを力に変えてぶつけろ！`;
+            } else if (current.m === "pro") { // 🐻クマ
+                res = `もういい、喋らなくていいよ。「${val}」という重荷、全部ボクが預かる。一人暮らしの不安も、ボクの背中の後ろにいれば安全だ。まずは温かいものを飲め。`;
+            } else { // デフォルト
+                res = `「${val}」…それはあまりに過酷だ。ボクの意見は『今は全てを捨てて逃げろ』だ。あなたの命以上に優先すべきことなんて、この世に一つもない。`;
             }
-            r += " ――今のボクの言葉、君にはどう響いた？";
-            add('p', r);
-        }, 800);
+
+            // 対話を強制する逆質問
+            res += ` \n\n――ボクのこの「意見」、あなたはどう思う？納得できないなら、もっと激しくぶつけてきて。`;
+            addLog('p', res);
+        }, 850);
     }
 </script>
 </body>
