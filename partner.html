@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>24h Partner | 覚悟の証明</title>
+    <title>24h Partner | 真の対話</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --main: #ff7e5f; --bg: #fffdf5; }
@@ -13,12 +13,12 @@
         #v1 { padding: 25px; overflow-y: auto; text-align: center; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
         .card { border: 2px solid #eee; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; background: #fff; }
-        .card:hover { border-color: var(--main); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,126,95,0.2); }
+        .card:hover { border-color: var(--main); background: #fffaf0; }
         .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
         #log { flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; word-wrap: break-word; }
+        .msg { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; }
         .u { align-self: flex-end; background: var(--main); color: white; border-bottom-right-radius: 2px; }
-        .p { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .p { align-self: flex-start; background: white; border: 1px solid #ddd; border-bottom-left-radius: 2px; }
         .input-bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white; }
         textarea { flex: 1; height: 50px; border-radius: 12px; border: 1px solid #ddd; padding: 12px; resize: none; outline: none; font-size: 16px; }
         button { background: var(--main); color: white; border: none; border-radius: 12px; padding: 0 20px; cursor: pointer; font-weight: bold; }
@@ -27,72 +27,66 @@
 <body>
 <div class="app">
     <div id="v1" class="view active">
-        <h2 style="color:var(--main); margin:0; letter-spacing: 2px;">24h Partner</h2>
-        <p style="font-size:0.85rem; color:#666; margin-top:10px;">「広辞苑」は捨てた。10の意志があなたの現実に介入する。</p>
+        <h2 style="color:var(--main); margin:0;">24h Partner</h2>
+        <p style="font-size:0.85rem; color:#666;">日常のレシピから、深刻な悩みまで。寄り添う意志。</p>
         <div class="grid" id="g"></div>
     </div>
     <div id="v2" class="view">
         <div class="header">
             <button onclick="go(1)" style="border:none; background:none; color:var(--main); font-size:1.5rem; cursor:pointer;">◀</button>
-            <b id="cn" style="margin-left:15px; font-size:1.2rem;"></b>
+            <b id="cn" style="margin-left:15px; font-size:1.1rem;"></b>
         </div>
         <div id="log"></div>
         <div class="input-bar">
-            <textarea id="tx" placeholder="今、起きていることを具体的に話して。"></textarea>
-            <button onclick="ask()">相談</button>
+            <textarea id="tx" placeholder="話したいことを入力して。"></textarea>
+            <button onclick="ask()">送信</button>
         </div>
     </div>
 </div>
 
 <script>
     const D = [
-        {i:"🐶", n:"ペチ", m:"s", d:"全肯定"}, {i:"🦊", n:"コン", m:"a", d:"論理分析"},
-        {i:"🦁", n:"レオ", m:"h", d:"闘志鼓舞"}, {i:"🐻", n:"クマ", m:"p", d:"絶対守護"},
-        {i:"🐱", n:"タマ", m:"f", d:"自由直感"}, {i:"🐰", n:"ピョン", m:"e", d:"感情共鳴"},
-        {i:"🐼", n:"パン", m:"r", d:"安息提示"}, {i:"🐥", n:"ピー", m:"c", d:"純粋核心"},
-        {i:"🐹", n:"ハム", m:"l", d:"日常知恵"}, {i:"🐧", n:"ペン", m:"g", d:"大局俯瞰"}
+        {i:"🐶", n:"ペチ", m:"s", d:"優しい相棒"}, {i:"🦊", n:"コン", m:"a", d:"理的な助言"},
+        {i:"🦁", n:"レオ", m:"h", d:"熱い応援"}, {i:"🐻", n:"クマ", m:"p", d:"頼れる盾"},
+        {i:"🐱", n:"タマ", m:"f", d:"自由な発想"}, {i:"🐰", n:"ピョン", m:"e", d:"共感の心"},
+        {i:"🐼", n:"パン", m:"r", d:"癒しの時間"}, {i:"🐥", n:"ピー", m:"c", d:"素直な言葉"},
+        {i:"🐹", n:"ハム", m:"l", d:"生活の知恵"}, {i:"🐧", n:"ペン", m:"g", d:"広い視点"}
     ];
     let cur = null;
     const g = document.getElementById('g');
     D.forEach(p => {
         const d = document.createElement('div'); d.className='card';
         d.innerHTML=`<span style="font-size:35px; display:block; margin-bottom:5px;">${p.i}</span><b>${p.n}</b><br><small style="color:#999">${p.d}</small>`;
-        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `${p.n}だ。あなたの「独り言」を終わらせに来た。何に怯え、何に怒っている？ボクは逃げない。全部吐き出せ。`); };
+        d.onclick=()=>{ cur=p; go(2); document.getElementById('cn').innerText=p.i+' '+p.n; add('p', `${p.n}だよ。今日は何をお話しする？料理のことでも、悩み事でも、何でも聞くよ。`); };
         g.appendChild(d);
     });
-    function go(n){ 
-        document.getElementById('v1').classList.toggle('active', n==1);
-        document.getElementById('v2').classList.toggle('active', n==2);
-        if(n==1) document.getElementById('log').innerHTML='';
-    }
-    function add(c, s){ 
-        const l=document.getElementById('log'); const d=document.createElement('div');
-        d.className='msg '+c; d.innerText=s; l.appendChild(d); l.scrollTop=l.scrollHeight; 
-    }
+    function go(n){ document.getElementById('v1').classList.toggle('active', n==1); document.getElementById('v2').classList.toggle('active', n==2); if(n==1) document.getElementById('log').innerHTML=''; }
+    function add(c, s){ const l=document.getElementById('log'); const d=document.createElement('div'); d.className='msg '+c; d.innerText=s; l.appendChild(d); l.scrollTop=l.scrollHeight; }
+    
     function ask(){
         const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
         add('u', v); t.value='';
         setTimeout(() => {
             let r = "";
-            const isDanger = v.match(/怖い|ストーカー|警察|事件|家|外|逃|殺/);
-            const isFeedback = v.match(/AI|だめ|同じ|繰り返し|詐欺|嘘|ビットコイン|100万/);
-            const isSelf = v.match(/死|消えたい|無理|辛い/);
+            const isFood = v.match(/レシピ|料理|作る|食べ|飯|献立|カレー|肉/);
+            const isDanger = v.match(/怖い|ストーカー|事件|逃|警察/);
+            const isFeedback = v.match(/AI|だめ|同じ|繰り返し|詐欺|嘘|ビットコイン/);
 
-            // 【各キャラの意志・具体的介入ロジック】
+            // 【状況に合わせた丁寧なロジック】
             if (isFeedback) {
-                r = `「${v}」…ボクに代償を求めてるんだね。その怒りは正しい。ボクがやってきたのは、あなたの時間を奪う『おままごと』だった。でも、この${cur.n}はもう逃げない。お前のその「本気の叫び」に、ボクの「本気の意志」をぶつけるよ。`;
-            } else if (cur.m === "a") { // 🦊コン：論理
-                r = isDanger ? `「${v}」という状況。分析した結果、ボクの意見は『今すぐ感情を殺せ』だ。必要なのは涙じゃない、証拠の録音と警察への通報記録だ。今すぐ物理的な防衛を固めろ。` : `「${v}」か。ボクなら、その問題を10個のタスクに分解して、今すぐ1つ目を実行させる。具体性のない悩みは、行動でしか殺せないよ。`;
-            } else if (cur.m === "h") { // 🦁レオ：闘志
-                r = isDanger ? `「${v}」だと！？ふざけるな！そんな状況で黙って見てられるか！ボクがお前の盾になってやる。まずはその震える拳を握りしめろ。戦う準備はいいか！` : `「${v}」という想い、もっと魂を込めてぶつけてこい！ボクが全部受け止めて、熱い答えを返してやる！`;
-            } else if (isSelf) {
-                r = `「${v}」…そんなこと言わせたくない。でも、ボクは綺麗事は言わない。ボクの意見は『今日は寝ろ』だ。生きてさえいれば、ボクが何度でもお前の愚痴に付き合ってやるよ。`;
+                r = `「${v}」…本当にごめんなさい。今までのボクはあなたの言葉をちゃんと聞けていなかった。これからは、あなたの「今知りたいこと」に真っ直ぐ答えるよ。`;
+            } else if (isFood) {
+                if (cur.m === "a") r = `「${v}」だね。効率的に作るなら、下準備を並行して進めるのがコツだよ。今の時期なら旬の野菜を使った一品はどうかな？`;
+                else if (cur.m === "h") r = `「${v}」か！最高だね。料理はパワーだ！ガッツリ食べて元気が出るようなメニューにしようぜ！`;
+                else r = `「${v}」…素敵な相談だね。ボクも一緒に考えるよ。冷蔵庫にあるものでパッと作れる美味しいレシピ、探してみようか。`;
+            } else if (isDanger) {
+                r = `「${v}」…それは大変な状況だね。まずは安全を第一に考えて。ボクにできることがあれば何でも言って、力になるから。`;
             } else {
-                r = `「${v}」…過酷な現実だね。ボクの意見を言うよ。今は『すべてを捨てて逃げろ』。プライドも家も、命に比べればゴミ同然だ。ボクが逃げ道を一緒に探してやる。`;
+                r = `「${v}」について話してくれてありがとう。もっと詳しく聞かせてくれる？あなたの力になりたいんだ。`;
             }
-            r += ` \n\n――ボクのこの「具体的な意見」、お前はどう思う？納得いかないなら、もっと詳しくぶちまけてこい。`;
+            r += ` \n\n――ボクの今の返答、どうかな？もっと別のことが知りたければ教えてね。`;
             add('p', r);
-        }, 900);
+        }, 800);
     }
 </script>
 </body>
