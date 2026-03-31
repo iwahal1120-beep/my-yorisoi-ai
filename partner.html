@@ -5,101 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI知恵袋 | 命と暮らしのレスキュー</title>
     <style>
-        :root { --main: #4a90e2; --bg: #f8f9fa; --accent: #ff6b6b; --text: #333; }
-        body { font-family: "Hiragino Sans", "Meiryo", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .app-card { max-width: 600px; width: 100%; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 90vh; }
-        .header { background: var(--main); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 1.2rem; }
-        #chat-log { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .bubble { max-width: 85%; padding: 15px; border-radius: 20px; line-height: 1.6; font-size: 15px; position: relative; animation: pop 0.3s ease; }
-        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .user { align-self: flex-end; background: #007aff; color: white; border-bottom-right-radius: 5px; }
-        .ai { align-self: flex-start; background: #f0f0f0; border-bottom-left-radius: 5px; border: 2px solid #e0e0e0; }
-        .icon { font-size: 2rem; display: block; margin-bottom: 8px; text-align: center; }
-        .input-area { padding: 20px; border-top: 1px solid #eee; display: flex; gap: 10px; background: #fff; }
-        textarea { flex: 1; height: 50px; border-radius: 25px; border: 2px solid #ddd; padding: 12px 20px; outline: none; font-size: 16px; resize: none; }
-        button { background: var(--accent); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; font-size: 20px; transition: 0.2s; }
-        button:hover { transform: scale(1.1); }
-        .wisdom-tag { display: inline-block; background: #fff; border: 1px solid var(--main); color: var(--main); padding: 2px 10px; border-radius: 10px; font-size: 12px; margin-bottom: 5px; font-weight: bold; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Sans", sans-serif; background: #eef2f7; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .app { max-width: 500px; width: 100%; background: white; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+        .head { background: #333; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        #log { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
+        .msg { max-width: 85%; padding: 15px; border-radius: 18px; line-height: 1.6; font-size: 15px; }
+        .u { align-self: flex-end; background: #007aff; color: white; }
+        .p { align-self: flex-start; background: #f0f0f0; border: 1px solid #ddd; }
+        .icon { font-size: 2.5rem; display: block; margin: 5px 0; text-align: center; }
+        .tag { font-size: 11px; font-weight: bold; color: #ff4b2b; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .bar { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        textarea { flex: 1; height: 45px; border-radius: 20px; border: 1px solid #ccc; padding: 10px 15px; outline: none; font-size: 16px; resize: none; }
+        button { background: #ff4b2b; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
-
-<div class="app-card">
-    <div class="header">🌟 AI知恵袋（正規品）</div>
-    <div id="chat-log"></div>
-    <div class="input-area">
-        <textarea id="tx" placeholder="悩みやキーワードを入れてね（例：地震, 卵, 物価）"></textarea>
+<div class="app">
+    <div class="head">🛡️ AI知恵袋 : 2026 決定版</div>
+    <div id="log"></div>
+    <div class="bar">
+        <textarea id="tx" placeholder="防災, 物価, 卵... 入力してください"></textarea>
         <button onclick="ask()">🚀</button>
     </div>
 </div>
 
 <script>
-// 【膨大な知恵のデータベース】
-const WisdomBase = {
-    "防災": {
-        icon: "🏃‍♂️💨",
-        title: "命が1番！の知恵",
-        msg: "防災リュック？靴？それより先に『自分の命』を確保して！揺れたら机の下、あるいは何も落ちてこない場所へ。リュックを取りに戻って命を落としたら、その中身を使う人はもういないんだ。子供たちも覚えておいて。逃げるときは手ぶらでもいい、生きていれば次がある！"
-    },
-    "物価高": {
-        icon: "💰📈",
-        title: "賢いやりくりの知恵",
-        msg: "ガソリン代も電気代も高いよね。でも『卵』はまだ私たちの強い味方！もやし、豆腐、卵を組み合わせれば100円でお腹いっぱいになれるメニューは無限大。遠くの国の戦争が食卓に届いちゃう時代だけど、私たちは足元の節約で賢く戦おう！"
-    },
-    "戦争": {
-        icon: "🕊️🌍",
-        title: "平和と暮らしの知恵",
-        msg: "ニュースを見て怖くなることもあるよね。世界がザワザワしている時は、ガソリンも食べ物も高くなる。でも、そんな時こそ身近な人と笑い合おう。大人が不安だと子供も不安になるから。まずは今日、美味しい卵料理を食べて、明日を生きるエネルギーを貯めること。それが平和への第一歩だよ。"
-    },
-    "卵": {
-        icon: "🍳✨",
-        title: "卵の魔法の知恵",
-        msg: "簡単レシピ！玉ねぎを薄く切ってレンジで1分。そこに卵を落として混ぜ、めんつゆをかけてもう1分。これだけで『即席親子丼の素』ができるよ！火を使わないから子供でも安心。物価高に負けない最強のパワーフードだね！"
-    },
-    "デフォルト": {
-        icon: "🤖💡",
-        title: "AIの汎用知恵",
-        msg: "そのキーワード、私のデータベースに新しく刻むね！大切なのは『無理をしないこと』『知恵を分かち合うこと』だよ。他にも知りたいことがあったら教えて。大人の難しい悩みも、子供の素朴な疑問も、全部受け止めるよ！"
-    }
+const DB = {
+    "防災": { i:"🚨", t:"命を守る知恵", m:"防災リュックよりも、まず自分の命！揺れたら即、安全な場所へ。手ぶらでいい、生きていれば次がある。子供たち、お父さんお母さん、まずは命を確保して！" },
+    "物価": { i:"🥚", t:"暮らしの知恵", m:"ガソリンも食費も高い今、味方は『卵』と『もやし』！100円で家族を笑顔にするレシピは無限にある。物価高に負けない知恵を出し合おう。" },
+    "戦争": { i:"🌍", t:"世界の知恵", m:"遠くの戦争が私たちのガソリン代を上げている。でも、私たちが今できるのは無駄を省き、身近な人を大切にすること。それが平和への最短距離です。" },
+    "卵": { i:"🍳", t:"時短レシピの知恵", m:"卵2個にマヨネーズを少し。レンジで1分混ぜるだけ！ふわふわ卵料理の完成。ガス代の節約にもなるし、子供でも火を使わず作れるよ！" },
+    "DEFAULT": { i:"💡", t:"AIの回答", m:"その悩み、深く受け止めたよ。難しい言葉はいらない、まずは目の前の生活を一つずつ良くしていこう。他に聞きたいことはある？" }
 };
 
-function add(who, title, text, icon) {
-    const log = document.getElementById('chat-log');
-    const div = document.createElement('div');
-    div.className = `bubble ${who}`;
-    if(who === 'ai') {
-        div.innerHTML = `<span class="wisdom-tag">${title}</span><span class="icon">${icon}</span>${text}`;
-    } else {
-        div.innerText = text;
-    }
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+function add(c, t, m, i){
+    const l=document.getElementById('log');
+    const d=document.createElement('div');
+    d.className=`msg ${c}`;
+    if(c==='p'){ d.innerHTML=`<span class="tag">${t}</span><span class="icon">${i}</span>${m}`; }
+    else { d.innerText=m; }
+    l.appendChild(d);
+    l.scrollTop=l.scrollHeight;
 }
 
-function ask() {
-    const tx = document.getElementById('tx');
-    const v = tx.value.trim();
-    if(!v) return;
-
-    add('user', '', v, '');
-    tx.value = '';
-
+function ask(){
+    const t=document.getElementById('tx'); const v=t.value.trim(); if(!v)return;
+    add('u', '', v, ''); t.value='';
     setTimeout(() => {
-        let key = "デフォルト";
-        if(v.match(/地震|災害|火事|避難|防災/)) key = "防災";
-        else if(v.match(/物価|高い|お金|節約|ガソリン/)) key = "物価高";
-        else if(v.match(/戦争|世界|平和/)) key = "戦争";
-        else if(v.match(/卵|たまご|料理|レシピ/)) key = "卵";
-
-        const data = WisdomBase[key];
-        add('ai', data.title, data.msg, data.icon);
-    }, 600);
+        let k="DEFAULT";
+        if(v.match(/地震|防災|逃げる|命/)) k="防災";
+        else if(v.match(/物価|ガソリン|高い|節約/)) k="物価";
+        else if(v.match(/戦争|世界/)) k="戦争";
+        else if(v.match(/卵|たまご|レシピ/)) k="卵";
+        const d=DB[k]; add('p', d.t, d.m, d.i);
+    }, 500);
 }
 
-// 起動時のメッセージ
-window.onload = () => {
-    add('ai', "ようこそ！", "こんにちは！ここは『AI知恵袋』だよ。物価高に負けない方法や、命を守る本当の防災、美味しい卵の話まで、なんでも聞いてね！", "🌈");
-};
+window.onload=()=>{ add('p', 'START', '「AI知恵袋」へようこそ。物価高、防災、卵のレシピ。あなたが知りたい知恵を今すぐ出します。', '🌟'); }
 </script>
 </body>
 </html>
